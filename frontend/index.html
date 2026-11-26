@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hospital Santa Cecília | Login</title>
   <link rel="stylesheet" href="css/style.css">
-
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
     body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #123b63; color: #243247; padding: 20px; }
@@ -27,9 +26,9 @@
 </head>
 <body>
   <div class="login-card">
-    <img src="img/Refined_Gold_Foil_Logo_of_Santa%20Cec%C3%ADlia-removebg-preview.png"
-         alt="Logo Hospital Santa Cecília" class="hospital-logo-img"
-         onerror="this.onerror=null;this.src='img/Elegant%20Minimalist%20Logo%20for%20Hospital%20Santa%20Cec%C3%ADlia.png'">
+    <!-- Caminho idêntico ao nome real do arquivo: há underscore entre Santa e Cecília. -->
+    <img src="img/Refined_Gold_Foil_Logo_of_Santa_Cec%C3%ADlia-removebg-preview.png"
+         alt="Logo Hospital Santa Cecília" class="hospital-logo-img">
 
     <h1>Hospital Santa Cecília</h1>
     <p>Acesso ao Sistema de Gestão Hospitalar</p>
@@ -59,9 +58,22 @@
     const mensagemErro = document.getElementById("mensagemErro");
     const btnEntrar = document.getElementById("btnEntrar");
 
+    function normalizarPerfil(valor) {
+      const chave = String(valor || "").toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const perfis = {
+        admin: "admin", administrador: "admin", administrador_geral: "admin",
+        atendimento: "atendimento", recepcao: "atendimento", atendente: "atendimento",
+        triagem: "triagem", enfermagem: "triagem", enfermeiro: "triagem",
+        medico: "medico", doutor: "medico",
+        medicacoes: "medicacoes", farmacia: "medicacoes", farmaceutico: "medicacoes",
+        almoxarifado: "almoxarifado", estoque: "almoxarifado", tv: "tv"
+      };
+      return perfis[chave] || "";
+    }
+
     formLogin.addEventListener("submit", async function(event) {
       event.preventDefault();
-      const usuario = document.getElementById("usuario").value.trim();
+      const loginDigitado = document.getElementById("usuario").value.trim();
       const senha = document.getElementById("senha").value.trim();
       mensagemErro.style.display = "none";
       btnEntrar.disabled = true;
@@ -71,51 +83,51 @@
         const resposta = await fetch("/login", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify({ usuario, senha })
+          body: JSON.stringify({ usuario: loginDigitado, senha })
         });
         const dados = await resposta.json().catch(() => null);
         if (!resposta.ok) {
           throw new Error((dados && (dados.erro || dados.message)) || "Usuário ou senha inválidos.");
         }
         if (!dados || typeof dados !== "object") {
-          throw new Error("O servidor retornou uma resposta de login inválida. Verifique a API do sistema.");
+          throw new Error("O servidor retornou uma resposta de login inválida.");
         }
 
-        // Compatível com as duas respostas usadas pelas APIs do projeto: {usuario: {...}} e {...}.
-        const autenticado = dados.usuario || dados.user || (dados.data && (dados.data.usuario || dados.data.user)) || dados;
-        const tipoInformado = autenticado.tipo || autenticado.perfil || autenticado.role || autenticado.tipo_usuario;
-        const tipo = String(tipoInformado || "").toLowerCase().trim();
-        if (!autenticado.usuario || !tipo) {
-          throw new Error("Login recebido, mas a resposta da API não informa usuário e perfil. Confira o cadastro e o endpoint /login.");
+        // Aceita respostas diretas e envelopadas, inclusive APIs que usam username/role.
+        const usuarioObj = [dados.usuario, dados.user, dados.data?.usuario, dados.data?.user, dados.data]
+          .find(valor => valor && typeof valor === "object") || dados;
+        const loginAutenticado = usuarioObj.usuario || usuarioObj.username || usuarioObj.login ||
+          (typeof dados.usuario === "string" ? dados.usuario : "") || loginDigitado;
+        const perfilResposta = usuarioObj.tipo || usuarioObj.perfil || usuarioObj.role ||
+          usuarioObj.tipo_usuario || usuarioObj.userType || usuarioObj.user_type ||
+          dados.tipo || dados.perfil || dados.role;
+        // Algumas versões antigas da API devolvem somente o login; para os perfis padrão
+        // o perfil pode ser reconhecido pelo nome de usuário. Usuários customizados precisam
+        // ter o perfil preenchido no cadastro.
+        const tipo = normalizarPerfil(perfilResposta) || normalizarPerfil(loginAutenticado);
+        if (!tipo) {
+          throw new Error("O login foi aceito, mas esse usuário não tem perfil definido. Peça ao administrador para corrigir o perfil do cadastro.");
         }
 
         const usuarioSeguro = {
-          id: autenticado.id,
-          nome: autenticado.nome || autenticado.usuario,
-          usuario: autenticado.usuario,
+          id: usuarioObj.id || dados.id || null,
+          nome: usuarioObj.nome || usuarioObj.name || loginAutenticado,
+          usuario: loginAutenticado,
           tipo
         };
         sessionStorage.setItem("usuarioLogado", JSON.stringify(usuarioSeguro));
         localStorage.setItem("hospital_user", JSON.stringify(usuarioSeguro));
 
         const telas = {
-          atendimento: "atendimento.html",
-          recepcao: "atendimento.html",
-          triagem: "triagem.html",
-          medico: "medico.html",
-          medicacoes: "medicacoes.html",
-          farmacia: "medicacoes.html",
-          admin: "admin.html",
-          administrador: "admin.html",
-          almoxarifado: "almoxarifado.html",
-          estoque: "almoxarifado.html",
-          tv: "tv.html"
+          atendimento: "atendimento.html", triagem: "triagem.html", medico: "medico.html",
+          medicacoes: "medicacoes.html", admin: "admin.html",
+          almoxarifado: "almoxarifado.html", tv: "tv.html"
         };
         window.location.href = telas[tipo] || "modulos.html";
       } catch (erro) {
         console.error("Erro no login:", erro);
         mensagemErro.textContent = erro.message === "Failed to fetch"
-          ? "Não foi possível conectar ao servidor. Abra o sistema pelo endereço publicado ou inicie o servidor local (npm start); não abra o HTML diretamente como arquivo."
+          ? "Não foi possível conectar ao servidor. Abra o sistema pelo endereço publicado ou inicie o servidor local com npm start."
           : erro.message;
         mensagemErro.style.display = "block";
       } finally {
@@ -125,7 +137,7 @@
     });
 
     document.addEventListener("keydown", function(e) {
-      if (e.ctrlKey && e.altKey && (e.key === "a" || e.key === "A")) {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "a") {
         e.preventDefault();
         window.location.href = "admin.html";
       }
