@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Santa Cecília | Login</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #123b63;
+      color: #243247;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      padding: 35px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      text-align: center;
+    }
+
+    /* Estilo atualizado para a imagem da logo */
+    .hospital-logo-img {
+      max-width: 130px;
+      height: auto;
+      margin-bottom: 15px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .login-card h1 {
+      font-size: 22px;
+      color: #123b63;
+      margin-bottom: 6px;
+    }
+
+    .login-card p {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 25px;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      margin-bottom: 18px;
+    }
+
+    .campo label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #34465b;
+      margin-bottom: 6px;
+    }
+
+    .campo input {
+      width: 100%;
+      height: 44px;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .campo input:focus {
+      border-color: #1768a6;
+      box-shadow: 0 0 0 3px rgba(23, 104, 166, 0.12);
+    }
+
+    .btn-entrar {
+      width: 100%;
+      height: 46px;
+      background: #1768a6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-entrar:hover {
+      background: #105487;
+    }
+
+    .btn-entrar:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .mensagem-erro {
+      display: none;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .rodape-login {
+      margin-top: 25px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <!-- Logomarca Oficial inserida da pasta img -->
+    <img src="img/Refined_Gold_Foil_Logo_of_Santa_Cecília-removebg-preview.png" alt="Logo Hospital Santa Cecília" class="hospital-logo-img">
+    
+    <h1>Hospital Santa Cecília</h1>
+    <p>Acesso ao Sistema de Gestão Hospitalar</p>
+
+    <div id="mensagemErro" class="mensagem-erro"></div>
+
+    <form id="formLogin">
+      <div class="campo">
+        <label for="usuario">Usuário</label>
+        <input type="text" id="usuario" placeholder="Digite seu usuário" required autocomplete="username">
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" placeholder="Digite sua senha" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" id="btnEntrar" class="btn-entrar">Entrar no Sistema</button>
+    </form>
+
+    <div class="rodape-login">
+      Hospital Santa Cecília · Atalho de Segurança (Ctrl + Alt + A)
+    </div>
+  </div>
+
+  <script>
+    const formLogin = document.getElementById("formLogin");
+    const mensagemErro = document.getElementById("mensagemErro");
+    const btnEntrar = document.getElementById("btnEntrar");
+
+    formLogin.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const usuario = document.getElementById("usuario").value.trim();
+      const senha = document.getElementById("senha").value.trim();
+
+      mensagemErro.style.display = "none";
+      btnEntrar.disabled = true;
+      btnEntrar.textContent = "Autenticando...";
+
+      try {
+        const resposta = await fetch("http://localhost:3000/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ usuario, senha })
+        });
+
+        if (!resposta.ok) {
+          const dadosErro = await resposta.json().catch(() => null);
+          throw new Error((dadosErro && dadosErro.erro) || "Usuário ou senha inválidos.");
+        }
+
+        const dados = await resposta.json();
+
+        if (dados.sucesso && dados.usuario) {
+          sessionStorage.setItem("usuarioLogado", JSON.stringify(dados.usuario));
+
+          const telas = {
+            atendimento: "atendimento.html",
+            triagem: "triagem.html",
+            medico: "medico.html",
+            medicacoes: "medicacoes.html",
+            admin: "admin.html"
+          };
+
+          const destino = telas[dados.usuario.tipo] || "atendimento.html";
+          window.location.href = destino;
+        }
+
+      } catch (erro) {
+        console.error("Erro no login:", erro);
+        mensagemErro.textContent = erro.message;
+        mensagemErro.style.display = "block";
+      } finally {
+        btnEntrar.disabled = false;
+        btnEntrar.textContent = "Entrar no Sistema";
+      }
+    });
+
+    document.addEventListener("keydown", function(e) {
+      if (e.ctrlKey && e.altKey && (e.key === "a" || e.key === "A")) {
+        e.preventDefault();
+        window.location.href = "admin.html";
+      }
+    });
+  </script>
+
+</body>
+</html>

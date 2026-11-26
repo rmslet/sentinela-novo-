@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Hospitalar | Hospital Santa Cecília</title>
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100vh;
+      overflow: hidden;
+      color: #183451;
+      background: linear-gradient(135deg, #eaf3fc 0%, #d8e8f8 100%);
+    }
+
+    .tv-container {
+      display: grid;
+      grid-template-columns: minmax(290px, 34%) minmax(0, 66%);
+      gap: 22px;
+      width: 100vw;
+      height: 100vh;
+      padding: 22px;
+    }
+
+    .left-panel,
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .box {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-width: 0;
+      padding: 24px;
+      overflow: hidden;
+      text-align: center;
+      background: #ffffff;
+      border: 1px solid #dce7f3;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(34, 73, 116, 0.10);
+    }
+
+    .local-box {
+      flex: 1;
+      background: linear-gradient(145deg, #155a96, #217fc0);
+      border: none;
+      color: white;
+    }
+
+    .local-box::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      top: -115px;
+      right: -80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .box-title {
+      position: relative;
+      margin-bottom: 18px;
+      color: #54708c;
+      font-size: clamp(16px, 1.7vw, 27px);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .local-box .box-title {
+      color: #d7eaff;
+    }
+
+    .local-type {
+      position: relative;
+      font-size: clamp(22px, 2.4vw, 38px);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .local-number {
+      position: relative;
+      margin-top: 12px;
+      color: #ffffff;
+      font-size: clamp(65px, 8vw, 125px);
+      font-weight: 800;
+      line-height: 1;
+      overflow-wrap: anywhere;
+      text-shadow: 0 4px 14px rgba(0, 0, 0, 0.13);
+    }
+
+    .local-caption {
+      position: relative;
+      margin-top: 16px;
+      color: #d7eaff;
+      font-size: clamp(12px, 1.1vw, 17px);
+      letter-spacing: 1px;
+    }
+
+    .history-box {
+      flex: 1.15;
+      justify-content: flex-start;
+      align-items: stretch;
+      padding: 25px 22px;
+    }
+
+    .history-heading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e6edf5;
+    }
+
+    .history-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: #eaf3fc;
+      color: #1769aa;
+      font-size: 20px;
+    }
+
+    .history-heading .box-title {
+      margin: 0;
+      font-size: clamp(14px, 1.35vw, 22px);
+      letter-spacing: 1px;
+    }
+
+    #history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      width: 100%;
+      list-style: none;
+      text-align: left;
+    }
+
+    #history-list li {
+      padding: 12px 14px;
+      color: #304b68;
+      background: #f5f8fc;
+      border-left: 4px solid #4b91d0;
+      border-radius: 8px;
+      font-size: clamp(13px, 1.2vw, 18px);
+      font-weight: 600;
+      overflow-wrap: anywhere;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-empty {
+      padding: 18px 8px;
+      color: #8495a8;
+      text-align: center;
+      font-size: clamp(13px, 1.1vw, 17px);
+      font-weight: 400;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    .patient-box {
+      flex: 3;
+      padding: 35px;
+      background: #ffffff;
+      border-top: 8px solid #247bb8;
+    }
+
+    .patient-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      color: #55728f;
+      font-size: clamp(18px, 2vw, 32px);
+      font-weight: 700;
+      letter-spacing: 3px;
+    }
+
+    .patient-label .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #35a775;
+      box-shadow: 0 0 0 6px #e3f6ed;
+    }
+
+    .patient-name {
+      width: 100%;
+      color: #14558c;
+      font-size: clamp(36px, 6vw, 94px);
+      font-weight: 800;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .patient-instruction {
+      margin-top: 30px;
+      color: #758ba2;
+      font-size: clamp(15px, 1.6vw, 25px);
+      line-height: 1.5;
+    }
+
+    .logo-box {
+      flex: 0.8;
+      flex-direction: row;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      background: #ffffff;
+    }
+
+    .hospital-symbol {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 65px;
+      height: 65px;
+      flex-shrink: 0;
+      border-radius: 17px;
+      color: #ffffff;
+      background: #1769aa;
+      font-size: 35px;
+    }
+
+    .logo-info {
+      text-align: left;
+    }
+
+    .logo-text {
+      color: #174f80;
+      font-size: clamp(18px, 2.1vw, 32px);
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .logo-subtitle {
+      margin-top: 6px;
+      color: #8092a6;
+      font-size: clamp(11px, 1vw, 16px);
+      letter-spacing: 1px;
+    }
+
+    .flash {
+      animation: flash 0.55s ease 3;
+    }
+
+    @keyframes flash {
+      0%, 100% {
+        background-color: #ffffff;
+      }
+      50% {
+        background-color: #d8ecff;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .tv-container {
+        grid-template-columns: 34% minmax(0, 66%);
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .left-panel,
+      .right-panel {
+        gap: 12px;
+      }
+
+      .box {
+        padding: 15px;
+        border-radius: 13px;
+      }
+
+      .patient-box {
+        padding: 18px;
+      }
+
+      .logo-box {
+        gap: 10px;
+      }
+
+      .hospital-symbol {
+        width: 42px;
+        height: 42px;
+        font-size: 24px;
+      }
+
+      .history-box {
+        padding: 15px 10px;
+      }
+
+      #history-list li {
+        padding: 9px 7px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="tv-container">
+
+    <section class="left-panel">
+
+      <div class="box local-box">
+        <div class="box-title">Local de Atendimento</div>
+        <div class="local-type" id="local-tipo">GUICHÊ</div>
+        <div class="local-number" id="local-numero">--</div>
+        <div class="local-caption">AGUARDE O CHAMADO</div>
+      </div>
+
+      <div class="box history-box">
+        <div class="history-heading">
+          <div class="history-icon">◷</div>
+          <div class="box-title">Últimas Chamadas</div>
+        </div>
+
+        <ul id="history-list">
+          <li class="history-empty">Nenhuma chamada registrada</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <section class="right-panel">
+
+      <div class="box patient-box">
+        <div class="patient-label">
+          <span class="status-dot"></span>
+          PACIENTE CHAMADO
+        </div>
+
+        <div class="patient-name" id="patient-name">
+          AGUARDANDO...
+        </div>
+
+        <div class="patient-instruction">
+          Por favor, dirija-se ao local indicado no painel.
+        </div>
+      </div>
+
+      <div class="box logo-box">
+        <div class="hospital-symbol">✚</div>
+
+        <div class="logo-info">
+          <div class="logo-text">Hospital Santa Cecília</div>
+          <div class="logo-subtitle">PAINEL DE CHAMADAS · SISTEMA HOSPITALAR</div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    let ultimoId = null;
+
+    // Emissão de Bip Sonoro com Web Audio API
+    function tocarSomChamada() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.15); // A5
+
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.6);
+      } catch (e) {
+        console.log("Áudio aguardando interação do usuário na TV.");
+      }
+    }
+
+    function renderizarDados(data) {
+      if (!data) return;
+
+      const chamada = data.atual || data.chamada;
+      const historico = data.historico || [];
+
+      if (chamada) {
+        document.getElementById("local-tipo").innerText = chamada.localTipo || "GUICHÊ";
+        document.getElementById("local-numero").innerText = chamada.localNumero || "--";
+        document.getElementById("patient-name").innerText = chamada.paciente || "AGUARDANDO...";
+
+        if (chamada.id !== ultimoId) {
+          ultimoId = chamada.id;
+
+          tocarSomChamada();
+
+          const patientBox = document.querySelector(".patient-box");
+          patientBox.classList.remove("flash");
+          void patientBox.offsetWidth;
+          patientBox.classList.add("flash");
+        }
+      }
+
+      // Atualiza o histórico
+      const list = document.getElementById("history-list");
+      list.innerHTML = "";
+
+      if (historico.length === 0) {
+        const vazio = document.createElement("li");
+        vazio.className = "history-empty";
+        vazio.textContent = "Nenhuma chamada registrada";
+        list.appendChild(vazio);
+        return;
+      }
+
+      historico.slice(0, 4).forEach(h => {
+        const li = document.createElement("li");
+        const tipo = h.localTipo ? h.localTipo.substring(0, 6).toUpperCase() : "GUICHÊ";
+
+        li.innerHTML = `
+          <span><b>${tipo} ${h.localNumero || "--"}:</b> ${h.paciente || "Paciente"}</span>
+          <small style="color:#77869a; font-size: 12px;">${h.hora || ""}</small>
+        `;
+
+        list.appendChild(li);
+      });
+    }
+
+    // WebSockets em tempo real
+    let socket;
+    try {
+      socket = io("http://localhost:3000");
+      socket.on("nova_chamada_tv", function(data) {
+        renderizarDados(data);
+      });
+    } catch (e) {
+      console.warn("Socket.io não disponível na TV.");
+    }
+
+    // Busca via API HTTP como fallback inicial
+    function buscarChamadaHTTP() {
+      fetch("http://localhost:3000/api/tv/chamada")
+        .then(r => r.json())
+        .then(data => renderizarDados(data))
+        .catch(err => console.log("Erro ao buscar chamadas na TV:", err));
+    }
+
+    buscarChamadaHTTP();
+    setInterval(buscarChamadaHTTP, 3000);
+  </script>
+
+</body>
+</html>
