@@ -7,152 +7,50 @@
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #123b63;
-      color: #243247;
-      padding: 20px;
-    }
-
-    .login-card {
-      background: #ffffff;
-      width: 100%;
-      max-width: 400px;
-      padding: 35px 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      text-align: center;
-    }
-
-    /* Estilo atualizado para a imagem da logo */
-    .hospital-logo-img {
-      max-width: 130px;
-      height: auto;
-      margin-bottom: 15px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .login-card h1 {
-      font-size: 22px;
-      color: #123b63;
-      margin-bottom: 6px;
-    }
-
-    .login-card p {
-      font-size: 13px;
-      color: #64748b;
-      margin-bottom: 25px;
-    }
-
-    .campo {
-      display: flex;
-      flex-direction: column;
-      text-align: left;
-      margin-bottom: 18px;
-    }
-
-    .campo label {
-      font-size: 13px;
-      font-weight: 700;
-      color: #34465b;
-      margin-bottom: 6px;
-    }
-
-    .campo input {
-      width: 100%;
-      height: 44px;
-      padding: 10px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .campo input:focus {
-      border-color: #1768a6;
-      box-shadow: 0 0 0 3px rgba(23, 104, 166, 0.12);
-    }
-
-    .btn-entrar {
-      width: 100%;
-      height: 46px;
-      background: #1768a6;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin-top: 10px;
-    }
-
-    .btn-entrar:hover {
-      background: #105487;
-    }
-
-    .btn-entrar:disabled {
-      background: #94a3b8;
-      cursor: not-allowed;
-    }
-
-    .mensagem-erro {
-      display: none;
-      background: #fee2e2;
-      border: 1px solid #fecaca;
-      color: #b91c1c;
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 13px;
-      margin-bottom: 18px;
-    }
-
-    .rodape-login {
-      margin-top: 25px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #123b63; color: #243247; padding: 20px; }
+    .login-card { background: #fff; width: 100%; max-width: 400px; padding: 35px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.25); text-align: center; }
+    .hospital-logo-img { max-width: 130px; max-height: 130px; object-fit: contain; margin: 0 auto 15px; display: block; }
+    .login-card h1 { font-size: 22px; color: #123b63; margin-bottom: 6px; }
+    .login-card p { font-size: 13px; color: #64748b; margin-bottom: 25px; }
+    .campo { display: flex; flex-direction: column; text-align: left; margin-bottom: 18px; }
+    .campo label { font-size: 13px; font-weight: 700; color: #34465b; margin-bottom: 6px; }
+    .campo input { width: 100%; height: 44px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; }
+    .campo input:focus { border-color: #1768a6; box-shadow: 0 0 0 3px rgba(23,104,166,.12); }
+    .btn-entrar { width: 100%; height: 46px; background: #1768a6; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .2s; margin-top: 10px; }
+    .btn-entrar:hover { background: #105487; }
+    .btn-entrar:disabled { background: #94a3b8; cursor: not-allowed; }
+    .mensagem-erro { display: none; background: #fee2e2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 18px; }
+    .rodape-login { margin-top: 25px; font-size: 12px; color: #64748b; line-height: 1.8; }
+    .rodape-login a { color: #1768a6; }
   </style>
 </head>
 <body>
-
   <div class="login-card">
-    <!-- Logomarca Oficial inserida da pasta img -->
-    <img src="img/Refined_Gold_Foil_Logo_of_Santa Cecília-removebg-preview.png" alt="Logo Hospital Santa Cecília" class="hospital-logo-img">
-    
+    <img src="img/Refined_Gold_Foil_Logo_of_Santa%20Cec%C3%ADlia-removebg-preview.png"
+         alt="Logo Hospital Santa Cecília" class="hospital-logo-img"
+         onerror="this.onerror=null;this.src='img/Elegant%20Minimalist%20Logo%20for%20Hospital%20Santa%20Cec%C3%ADlia.png'">
+
     <h1>Hospital Santa Cecília</h1>
     <p>Acesso ao Sistema de Gestão Hospitalar</p>
 
-    <div id="mensagemErro" class="mensagem-erro"></div>
+    <div id="mensagemErro" class="mensagem-erro" role="alert"></div>
 
     <form id="formLogin">
       <div class="campo">
         <label for="usuario">Usuário</label>
         <input type="text" id="usuario" placeholder="Digite seu usuário" required autocomplete="username">
       </div>
-
       <div class="campo">
         <label for="senha">Senha</label>
         <input type="password" id="senha" placeholder="Digite sua senha" required autocomplete="current-password">
       </div>
-
       <button type="submit" id="btnEntrar" class="btn-entrar">Entrar no Sistema</button>
     </form>
 
     <div class="rodape-login">
-      Hospital Santa Cecília · Atalho de Segurança (Ctrl + Alt + A)
+      Hospital Santa Cecília · Atalho de Segurança (Ctrl + Alt + A)<br>
+      <a href="modulos.html">Abrir lista de módulos do sistema</a>
     </div>
   </div>
 
@@ -163,60 +61,61 @@
 
     formLogin.addEventListener("submit", async function(event) {
       event.preventDefault();
-
       const usuario = document.getElementById("usuario").value.trim();
       const senha = document.getElementById("senha").value.trim();
-
       mensagemErro.style.display = "none";
       btnEntrar.disabled = true;
       btnEntrar.textContent = "Autenticando...";
 
       try {
-        // Use a mesma origem do frontend; localhost não existe no navegador dos usuários do Render.
         const resposta = await fetch("/login", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
           body: JSON.stringify({ usuario, senha })
         });
-
+        const dados = await resposta.json().catch(() => null);
         if (!resposta.ok) {
-          const dadosErro = await resposta.json().catch(() => null);
-          throw new Error((dadosErro && dadosErro.erro) || "Usuário ou senha inválidos.");
+          throw new Error((dados && (dados.erro || dados.message)) || "Usuário ou senha inválidos.");
+        }
+        if (!dados || typeof dados !== "object") {
+          throw new Error("O servidor retornou uma resposta de login inválida. Verifique a API do sistema.");
         }
 
-        const dados = await resposta.json();
-        // A API atual responde diretamente com o usuário; também aceita o formato envelopado.
-        const usuarioAutenticado = dados.usuario || dados;
-
-        if (!usuarioAutenticado.usuario || !usuarioAutenticado.tipo) {
-          throw new Error("A resposta do servidor não contém os dados do usuário.");
+        // Compatível com as duas respostas usadas pelas APIs do projeto: {usuario: {...}} e {...}.
+        const autenticado = dados.usuario || dados.user || (dados.data && (dados.data.usuario || dados.data.user)) || dados;
+        const tipoInformado = autenticado.tipo || autenticado.perfil || autenticado.role || autenticado.tipo_usuario;
+        const tipo = String(tipoInformado || "").toLowerCase().trim();
+        if (!autenticado.usuario || !tipo) {
+          throw new Error("Login recebido, mas a resposta da API não informa usuário e perfil. Confira o cadastro e o endpoint /login.");
         }
 
-        // Não mantenha qualquer campo extra (como senha) no armazenamento do navegador.
         const usuarioSeguro = {
-          id: usuarioAutenticado.id,
-          nome: usuarioAutenticado.nome,
-          usuario: usuarioAutenticado.usuario,
-          tipo: usuarioAutenticado.tipo
+          id: autenticado.id,
+          nome: autenticado.nome || autenticado.usuario,
+          usuario: autenticado.usuario,
+          tipo
         };
         sessionStorage.setItem("usuarioLogado", JSON.stringify(usuarioSeguro));
+        localStorage.setItem("hospital_user", JSON.stringify(usuarioSeguro));
 
         const telas = {
           atendimento: "atendimento.html",
+          recepcao: "atendimento.html",
           triagem: "triagem.html",
           medico: "medico.html",
           medicacoes: "medicacoes.html",
-          admin: "admin.html"
+          farmacia: "medicacoes.html",
+          admin: "admin.html",
+          administrador: "admin.html",
+          almoxarifado: "almoxarifado.html",
+          estoque: "almoxarifado.html",
+          tv: "tv.html"
         };
-
-        const destino = telas[usuarioSeguro.tipo] || "atendimento.html";
-        window.location.href = destino;
+        window.location.href = telas[tipo] || "modulos.html";
       } catch (erro) {
         console.error("Erro no login:", erro);
         mensagemErro.textContent = erro.message === "Failed to fetch"
-          ? "Não foi possível conectar ao servidor. Verifique se o serviço do Render está ativo e tente novamente."
+          ? "Não foi possível conectar ao servidor. Abra o sistema pelo endereço publicado ou inicie o servidor local (npm start); não abra o HTML diretamente como arquivo."
           : erro.message;
         mensagemErro.style.display = "block";
       } finally {
@@ -232,6 +131,5 @@
       }
     });
   </script>
-
 </body>
 </html>
