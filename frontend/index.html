@@ -130,7 +130,7 @@
 
   <div class="login-card">
     <!-- Logomarca Oficial inserida da pasta img -->
-    <img src="img/Refined_Gold_Foil_Logo_of_Santa_Cecília-removebg-preview.png" alt="Logo Hospital Santa Cecília" class="hospital-logo-img">
+    <img src="img/Refined_Gold_Foil_Logo_of_Santa Cecília-removebg-preview.png" alt="Logo Hospital Santa Cecília" class="hospital-logo-img">
     
     <h1>Hospital Santa Cecília</h1>
     <p>Acesso ao Sistema de Gestão Hospitalar</p>
@@ -172,7 +172,8 @@
       btnEntrar.textContent = "Autenticando...";
 
       try {
-        const resposta = await fetch("http://localhost:3000/api/login", {
+        // Use a mesma origem do frontend; localhost não existe no navegador dos usuários do Render.
+        const resposta = await fetch("/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -186,25 +187,37 @@
         }
 
         const dados = await resposta.json();
+        // A API atual responde diretamente com o usuário; também aceita o formato envelopado.
+        const usuarioAutenticado = dados.usuario || dados;
 
-        if (dados.sucesso && dados.usuario) {
-          sessionStorage.setItem("usuarioLogado", JSON.stringify(dados.usuario));
-
-          const telas = {
-            atendimento: "atendimento.html",
-            triagem: "triagem.html",
-            medico: "medico.html",
-            medicacoes: "medicacoes.html",
-            admin: "admin.html"
-          };
-
-          const destino = telas[dados.usuario.tipo] || "atendimento.html";
-          window.location.href = destino;
+        if (!usuarioAutenticado.usuario || !usuarioAutenticado.tipo) {
+          throw new Error("A resposta do servidor não contém os dados do usuário.");
         }
 
+        // Não mantenha qualquer campo extra (como senha) no armazenamento do navegador.
+        const usuarioSeguro = {
+          id: usuarioAutenticado.id,
+          nome: usuarioAutenticado.nome,
+          usuario: usuarioAutenticado.usuario,
+          tipo: usuarioAutenticado.tipo
+        };
+        sessionStorage.setItem("usuarioLogado", JSON.stringify(usuarioSeguro));
+
+        const telas = {
+          atendimento: "atendimento.html",
+          triagem: "triagem.html",
+          medico: "medico.html",
+          medicacoes: "medicacoes.html",
+          admin: "admin.html"
+        };
+
+        const destino = telas[usuarioSeguro.tipo] || "atendimento.html";
+        window.location.href = destino;
       } catch (erro) {
         console.error("Erro no login:", erro);
-        mensagemErro.textContent = erro.message;
+        mensagemErro.textContent = erro.message === "Failed to fetch"
+          ? "Não foi possível conectar ao servidor. Verifique se o serviço do Render está ativo e tente novamente."
+          : erro.message;
         mensagemErro.style.display = "block";
       } finally {
         btnEntrar.disabled = false;
