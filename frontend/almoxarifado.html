@@ -1,2114 +1,524 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Almoxarifado</title>
-    <style>
-        :root {
-            --almox-azul: #123b63;
-            --almox-azul-claro: #1768a6;
-            --almox-texto: #243247;
-            --almox-secundario: #64748b;
-            --almox-borda: #e1e8f0;
-            --almox-fundo: #f1f5f9;
-            --dark: #243247;
-            --slate-500: #64748b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: inherit;
-        }
-
-        html {
-            min-height: 100%;
-        }
-
-        body {
-            min-height: 100vh;
-            margin: 0;
-            background: var(--almox-fundo);
-            color: var(--almox-texto);
-            font-family: "Segoe UI", Arial, sans-serif;
-            line-height: 1.5;
-        }
-
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 16px 5%;
-            background: var(--almox-azul);
-            color: #fff;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
-        }
-
-        .nav-brand,
-        .nav-user {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .logo-icon {
-            display: grid;
-            width: 44px;
-            height: 44px;
-            place-items: center;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.14);
-            font-size: 23px;
-        }
-
-        .nav-brand h1 {
-            margin: 0 0 4px;
-            color: #fff;
-            font-size: 20px;
-            line-height: 1.3;
-        }
-
-        .nav-brand span {
-            color: #d6e6f5;
-            font-size: 13px;
-        }
-
-        .nav-user {
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        .user-pill {
-            padding: 8px 14px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.15);
-            color: #fff;
-            font-size: 13px;
-        }
-
-        .btn-nav {
-            display: inline-flex;
-            align-items: center;
-            min-height: 38px;
-            padding: 8px 14px;
-            border-radius: 6px;
-            background: #dc2626;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: background 0.2s;
-        }
-
-        .btn-nav:hover {
-            background: #b91c1c;
-            text-decoration: none;
-        }
-
-        .container {
-            width: 94%;
-            max-width: 1440px;
-            margin: 28px auto;
-            padding: 0;
-            background: transparent;
-            border: 0;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .alerta-estoque {
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-            padding: 14px 18px;
-            border: 1px solid #fecaca;
-            border-radius: 9px;
-            background: #fef2f2;
-            color: #991b1b;
-            line-height: 1.5;
-        }
-
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
-            margin-bottom: 22px;
-        }
-
-        .stat-card {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            min-width: 0;
-            padding: 19px;
-            border: 1px solid var(--almox-borda);
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: 0 5px 18px rgba(31, 55, 80, 0.04);
-        }
-
-        .stat-icon {
-            display: grid;
-            flex: 0 0 46px;
-            width: 46px;
-            height: 46px;
-            place-items: center;
-            border-radius: 12px;
-            font-size: 21px;
-        }
-
-        .stat-icon.purple { background: #f1eafe; }
-        .stat-icon.green { background: #dcfce7; }
-        .stat-icon.orange { background: #ffedd5; }
-        .stat-icon.red { background: #fee2e2; }
-
-        .stat-value {
-            color: var(--almox-azul);
-            font-size: 25px;
-            font-weight: 750;
-            line-height: 1.2;
-        }
-
-        .stat-label {
-            margin-top: 4px;
-            color: var(--almox-secundario);
-            font-size: 13px;
-        }
-
-        .main-grand {
-            display: grid;
-            grid-template-columns: minmax(310px, 0.85fr) minmax(0, 1.65fr);
-            align-items: start;
-            gap: 22px;
-        }
-
-        .main-grand > div {
-            min-width: 0;
-        }
-
-        .card {
-            overflow: hidden;
-            border: 1px solid var(--almox-borda);
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: 0 5px 18px rgba(31, 55, 80, 0.04);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 18px 20px;
-            border-bottom: 1px solid #e5ebf2;
-        }
-
-        .card-header h2 {
-            margin: 0;
-            padding: 0;
-            border: 0;
-            color: #173e63;
-            font-size: 18px;
-            text-align: left;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: auto;
-            min-height: 40px;
-            margin: 0;
-            padding: 9px 14px;
-            border: 1px solid transparent;
-            border-radius: 7px;
-            background: var(--almox-azul-claro);
-            color: #fff;
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover {
-            background: #105487;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .entrada-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            padding: 5px;
-            border-radius: 9px;
-            background: #f1f5f9;
-        }
-
-        .tab-btn {
-            flex: 1;
-            border-color: transparent;
-            background: transparent;
-            color: #526276;
-        }
-
-        .tab-btn:hover {
-            background: #e2e8f0;
-            color: #173e63;
-        }
-
-        .tab-btn.active {
-            background: #fff;
-            color: var(--almox-azul-claro);
-            box-shadow: 0 1px 4px rgba(31, 55, 80, 0.12);
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #34465b;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .form-group label small {
-            margin-left: 5px;
-            color: var(--almox-secundario);
-            font-weight: 400;
-        }
-
-        .form-control {
-            display: block;
-            width: 100%;
-            min-height: 43px;
-            margin: 0;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            background: #fff;
-            color: var(--almox-texto);
-            font-family: inherit;
-            font-size: 14px;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--almox-azul-claro);
-            box-shadow: 0 0 0 3px rgba(23, 104, 166, 0.12);
-        }
-
-        .btn-full {
-            width: 100%;
-            min-height: 44px;
-            margin-top: 4px;
-        }
-
-        .btn-secondary {
-            border-color: #d7e0ea;
-            background: #f1f5f9;
-            color: #34465b;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-            color: #173e63;
-        }
-
-        .search-bar {
-            margin-bottom: 14px;
-        }
-
-        .search-input {
-            width: 100%;
-            min-height: 42px;
-            margin: 0;
-            padding: 10px 13px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            font: inherit;
-            font-size: 14px;
-        }
-
-        .filter-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .chip {
-            padding: 6px 12px;
-            border: 1px solid #dbe4ef;
-            border-radius: 18px;
-            background: #f8fafc;
-            color: #526276;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .chip.active {
-            border-color: #1768a6;
-            background: #eaf3fb;
-            color: #1768a6;
-        }
-
-        .estoque-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            text-align: left;
-        }
-
-        .estoque-table th {
-            padding: 12px 10px;
-            background: #f8fafc;
-            color: #526276;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .estoque-table td {
-            padding: 13px 10px;
-            border-top: 1px solid #e8edf3;
-            color: var(--almox-texto);
-            vertical-align: middle;
-        }
-
-        .estoque-table th:last-child,
-        .estoque-table td:last-child {
-            text-align: right;
-        }
-
-        .med-name {
-            color: #173e63;
-            font-weight: 700;
-        }
-
-        .med-cat {
-            color: var(--almox-secundario);
-        }
-
-        .stock-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 9px;
-            border-radius: 14px;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .stock-ok { background: #dcfce7; color: #166534; }
-        .stock-low { background: #ffedd5; color: #9a3412; }
-        .stock-critical,
-        .stock-empty { background: #fee2e2; color: #991b1b; }
-
-        .action-row {
-            display: flex;
-            justify-content: flex-end;
-            gap: 6px;
-        }
-
-        .btn-sm {
-            min-height: 34px;
-            padding: 7px 10px;
-            font-size: 12px;
-        }
-
-        .btn-success {
-            background: #1768a6;
-        }
-
-        .btn-danger-sm {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .btn-danger-sm:hover {
-            background: #fecaca;
-            color: #991b1b;
-        }
-
-        .empty-state {
-            padding: 24px 12px;
-            color: var(--almox-secundario);
-            text-align: center;
-        }
-
-        .empty-state p {
-            margin: 8px 0 0;
-            color: inherit;
-            font-size: 13px;
-        }
-
-        .empty-icon {
-            font-size: 25px;
-        }
-
-        .hist-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #e8edf3;
-        }
-
-        .hist-item:last-child {
-            border-bottom: 0;
-        }
-
-        .hist-icon {
-            display: grid;
-            flex: 0 0 38px;
-            width: 38px;
-            height: 38px;
-            place-items: center;
-            border-radius: 10px;
-            background: #eaf3fb;
-        }
-
-        .hist-info {
-            min-width: 0;
-            flex: 1;
-        }
-
-        .hist-med {
-            color: #173e63;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .hist-sub {
-            margin-top: 3px;
-            color: var(--almox-secundario);
-            font-size: 11px;
-        }
-
-        .hist-qty-pos {
-            color: #16845b;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            z-index: 10;
-            inset: 0;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(15, 23, 42, 0.55);
-        }
-
-        .modal-overlay.open {
-            display: flex;
-        }
-
-        .modal-box {
-            width: min(100%, 440px);
-            padding: 24px;
-            border: 1px solid var(--almox-borda);
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.2);
-        }
-
-        .modal-title {
-            margin-bottom: 18px;
-            color: #173e63;
-            font-size: 19px;
-            font-weight: 700;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 18px;
-        }
-
-        .toast {
-            position: fixed;
-            z-index: 20;
-            right: 24px;
-            bottom: 24px;
-            max-width: min(420px, calc(100vw - 32px));
-            padding: 13px 18px;
-            border-radius: 8px;
-            background: #173e63;
-            color: #fff;
-            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(10px);
-            transition: opacity 0.2s, transform 0.2s;
-        }
-
-        .toast[class*="toast-"] {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @media (max-width: 900px) {
-            .stats-bar {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .main-grand {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .navbar {
-                align-items: flex-start;
-                flex-direction: column;
-                padding: 15px 4%;
-            }
-
-            .nav-user {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .container {
-                width: 92%;
-                margin: 20px auto;
-            }
-
-            .stats-bar {
-                gap: 10px;
-            }
-
-            .stat-card {
-                gap: 10px;
-                padding: 13px 11px;
-            }
-
-            .stat-icon {
-                flex-basis: 38px;
-                width: 38px;
-                height: 38px;
-                font-size: 18px;
-            }
-
-            .stat-value {
-                font-size: 21px;
-            }
-
-            .stat-label {
-                font-size: 11px;
-            }
-
-            .card-header,
-            .card-body {
-                padding: 15px;
-            }
-
-            .card-header {
-                align-items: flex-start;
-            }
-
-            .card-header h2 {
-                font-size: 16px;
-            }
-
-            .estoque-table {
-                min-width: 620px;
-            }
-        }
-
-        :root {
-            --almox-azul: #173b5e;
-            --almox-azul-claro: #1768a6;
-            --almox-texto: #23364a;
-            --almox-secundario: #6b7b8d;
-            --almox-borda: #e2e8ef;
-            --almox-fundo: #f3f6fa;
-        }
-
-        body {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            grid-template-rows: auto auto 56px 38px 42px auto;
-            column-gap: 18px;
-            align-content: start;
-            background:
-                radial-gradient(ellipse at 50% 0, #e8f1f8 0, transparent 38%),
-                var(--almox-fundo);
-        }
-
-        .navbar {
-            grid-column: 1 / -1;
-            grid-row: 1;
-            gap: 24px;
-            min-height: 82px;
-            margin-bottom: 22px;
-            padding: 14px max(4%, calc((100% - 1320px) / 2));
-            background: linear-gradient(105deg, #123b63 0%, #174c76 100%);
-            box-shadow: inset 0 -3px #23a6a0, 0 5px 18px rgba(22, 52, 92, 0.14);
-        }
-
-        .logo-icon {
-            width: 46px;
-            height: 46px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-brand h1 {
-            font-size: 19px;
-            letter-spacing: 0.1px;
-        }
-
-        .nav-brand span {
-            font-size: 12px;
-        }
-
-        .user-pill {
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            background: rgba(255, 255, 255, 0.09);
-        }
-
-        .btn-nav {
-            border-radius: 8px;
-            background: #d94b55;
-        }
-
-        .btn-nav:hover {
-            background: #bd3541;
-        }
-
-        /* Lay out the existing summary elements as four cohesive metric cards. */
-        .container,
-        .stats-bar,
-        .stat-card {
-            display: contents;
-        }
-
-        .stat-card > div:has(#statZerado) {
-            display: contents;
-        }
-
-        .alerta-estoque {
-            grid-column: 1 / -1;
-            grid-row: 2;
-            align-self: end;
-            margin: 0 0 14px;
-            padding: 13px 17px;
-            border-color: #f2c8a9;
-            border-radius: 10px;
-            background: #fff7ed;
-            color: #9a4e19;
-            font-size: 14px;
-        }
-
-        .stat-icon {
-            width: auto;
-            height: auto;
-            min-height: 56px;
-            padding: 14px 17px 4px;
-            place-items: center start;
-            border: 1px solid var(--almox-borda);
-            border-bottom: 0;
-            border-radius: 14px 14px 0 0;
-            background: #fff !important;
-            font-size: 21px;
-        }
-
-        .stat-icon.purple { grid-area: 3 / 1 / 4 / 2; }
-        .stat-icon.green { grid-area: 3 / 2 / 4 / 3; }
-        .stat-icon.orange { grid-area: 3 / 3 / 4 / 4; }
-        .stat-icon.red { grid-area: 3 / 4 / 4 / 5; }
-
-        .stat-value {
-            min-width: 0;
-            margin: 0;
-            padding: 0 17px;
-            border-right: 1px solid var(--almox-borda);
-            border-left: 1px solid var(--almox-borda);
-            background: #fff;
-            color: var(--almox-azul);
-            font-size: 28px;
-            font-weight: 750;
-            line-height: 1.25;
-        }
-
-        #statItens { grid-area: 4 / 1 / 5 / 2; }
-        #statOk { grid-area: 4 / 2 / 5 / 3; }
-        #statBaixo { grid-area: 4 / 3 / 5 / 4; }
-        #statZerado { grid-area: 4 / 4 / 5 / 5; }
-
-        .stat-label {
-            min-height: 42px;
-            margin: 0;
-            padding: 3px 17px 14px;
-            border: 1px solid var(--almox-borda);
-            border-top: 0;
-            border-radius: 0 0 14px 14px;
-            background: #fff;
-            color: var(--almox-secundario);
-            font-size: 12px;
-            line-height: 1.4;
-        }
-
-        #statItens + .stat-label { grid-area: 5 / 1 / 6 / 2; }
-        #statOk + .stat-label { grid-area: 5 / 2 / 6 / 3; }
-        #statBaixo + .stat-label { grid-area: 5 / 3 / 6 / 4; }
-        #statZerado + .stat-label { grid-area: 5 / 4 / 6 / 5; }
-
-        .main-grand {
-            grid-column: 1 / -1;
-            grid-row: 6;
-            width: min(1320px, 92%);
-            margin: 25px auto 40px;
-            grid-template-columns: minmax(330px, 0.8fr) minmax(0, 1.7fr);
-            gap: 22px;
-        }
-
-        .card {
-            border-color: #e1e8ef;
-            border-radius: 14px;
-            box-shadow: 0 7px 22px rgba(31, 55, 80, 0.055);
-            transition: box-shadow 0.2s, border-color 0.2s;
-        }
-
-        .card:hover {
-            border-color: #d4e0ea;
-            box-shadow: 0 10px 28px rgba(31, 55, 80, 0.085);
-        }
-
-        .card-header {
-            min-height: 66px;
-            padding: 17px 21px;
-            background: #fff;
-        }
-
-        .card-header h2 {
-            color: var(--almox-azul);
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: -0.15px;
-        }
-
-        .card-body {
-            padding: 21px;
-        }
-
-        button {
-            min-height: 39px;
-            padding: 9px 13px;
-            border-radius: 8px;
-            background: var(--almox-azul-claro);
-            font-size: 13px;
-            box-shadow: none;
-        }
-
-        button:hover {
-            background: #105487;
-            box-shadow: 0 4px 10px rgba(23, 104, 166, 0.14);
-        }
-
-        .entrada-tabs {
-            gap: 6px;
-            padding: 5px;
-            border: 1px solid #e8edf3;
-            border-radius: 10px;
-            background: #f5f8fb;
-        }
-
-        .tab-btn {
-            min-height: 38px;
-            color: #637487;
-        }
-
-        .tab-btn.active {
-            color: var(--almox-azul-claro);
-            box-shadow: 0 2px 6px rgba(31, 55, 80, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 17px;
-        }
-
-        .form-group label {
-            color: #33475b;
-            font-size: 12px;
-            letter-spacing: 0.1px;
-        }
-
-        .form-control,
-        .search-input {
-            min-height: 42px;
-            border-color: #d3dde7;
-            border-radius: 8px;
-            background-color: #fff;
-            font-size: 14px;
-            transition: border-color 0.18s, box-shadow 0.18s;
-        }
-
-        .form-control:focus,
-        .search-input:focus {
-            border-color: #3a8abc;
-            box-shadow: 0 0 0 3px rgba(23, 104, 166, 0.1);
-        }
-
-        .btn-full {
-            min-height: 44px;
-            border-radius: 8px;
-            background: #1768a6;
-            letter-spacing: 0.1px;
-        }
-
-        .btn-secondary {
-            border-color: #d8e1ea;
-            background: #f3f6f9;
-            color: #405469;
-        }
-
-        .btn-secondary:hover {
-            border-color: #c9d6e2;
-            background: #e8eef4;
-            color: #173b5e;
-        }
-
-        .search-bar {
-            margin-bottom: 15px;
-        }
-
-        .search-input {
-            padding-left: 14px;
-        }
-
-        .chip {
-            padding: 6px 12px;
-            border-color: #dce5ed;
-            background: #f7f9fb;
-            transition: color 0.15s, background 0.15s, border-color 0.15s;
-        }
-
-        .chip:hover,
-        .chip.active {
-            border-color: #a9cce2;
-            background: #eaf3f9;
-            color: #1768a6;
-        }
-
-        .estoque-table th {
-            padding: 12px 11px;
-            border-bottom: 1px solid #dfe7ee;
-            background: #f5f8fb;
-            color: #53677b;
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
-        }
-
-        .estoque-table td {
-            padding: 14px 11px;
-        }
-
-        .estoque-table tbody tr:hover {
-            background: #f8fbfd;
-        }
-
-        .stock-badge {
-            padding: 5px 10px;
-        }
-
-        .action-row {
-            gap: 7px;
-        }
-
-        .btn-sm {
-            min-height: 33px;
-            border-radius: 7px;
-        }
-
-        .empty-state {
-            padding: 28px 14px;
-            border-radius: 9px;
-            background: #f8fafc;
-        }
-
-        .hist-item {
-            padding: 13px 0;
-        }
-
-        .hist-icon {
-            border: 1px solid #dceaf4;
-            background: #f0f7fc;
-        }
-
-        .modal-box {
-            border-radius: 14px;
-        }
-
-        .toast {
-            right: 22px;
-            bottom: 22px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 10px;
-        }
-
-        @media (max-width: 1000px) {
-            body {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                grid-template-rows: auto auto 56px 38px 42px 56px 38px 42px auto;
-                column-gap: 14px;
-            }
-
-            .stat-icon.purple { grid-area: 3 / 1 / 4 / 2; }
-            .stat-icon.green { grid-area: 3 / 2 / 4 / 3; }
-            .stat-icon.orange { grid-area: 6 / 1 / 7 / 2; }
-            .stat-icon.red { grid-area: 6 / 2 / 7 / 3; }
-
-            #statItens { grid-area: 4 / 1 / 5 / 2; }
-            #statOk { grid-area: 4 / 2 / 5 / 3; }
-            #statBaixo { grid-area: 7 / 1 / 8 / 2; }
-            #statZerado { grid-area: 7 / 2 / 8 / 3; }
-
-            #statItens + .stat-label { grid-area: 5 / 1 / 6 / 2; }
-            #statOk + .stat-label { grid-area: 5 / 2 / 6 / 3; }
-            #statBaixo + .stat-label { grid-area: 8 / 1 / 9 / 2; }
-            #statZerado + .stat-label { grid-area: 8 / 2 / 9 / 3; }
-
-            .main-grand {
-                grid-row: 9;
-                grid-template-columns: minmax(270px, 0.85fr) minmax(0, 1.4fr);
-            }
-        }
-
-        @media (max-width: 650px) {
-            body {
-                grid-template-rows: auto auto 54px 36px 40px 54px 36px 40px auto;
-                column-gap: 10px;
-            }
-
-            .navbar {
-                min-height: 0;
-                margin-bottom: 18px;
-                padding: 14px 5%;
-            }
-
-            .nav-brand h1 {
-                font-size: 17px;
-            }
-
-            .nav-brand span {
-                font-size: 11px;
-            }
-
-            .stat-icon {
-                min-height: 54px;
-                padding: 12px 12px 3px;
-            }
-
-            .stat-value {
-                padding: 0 12px;
-                font-size: 24px;
-            }
-
-            .stat-label {
-                min-height: 40px;
-                padding: 3px 12px 12px;
-                font-size: 11px;
-            }
-
-            .main-grand {
-                width: 92%;
-                grid-template-columns: minmax(0, 1fr);
-                gap: 16px;
-                margin-top: 20px;
-            }
-
-            .card-header,
-            .card-body {
-                padding: 15px;
-            }
-
-            .card-header {
-                align-items: center;
-            }
-
-            .card-header h2 {
-                font-size: 15px;
-            }
-
-            .modal-actions {
-                flex-wrap: wrap;
-            }
-        }
-
-        body {
-            display: block;
-            line-height: 1.5;
-        }
-
-        .navbar {
-            display: flex;
-            grid-column: auto;
-            grid-row: auto;
-            margin: 0;
-        }
-
-        .container {
-            display: block;
-            width: min(1320px, 94%);
-            max-width: 1320px;
-            margin: 28px auto 42px;
-            padding: 0;
-            background: transparent;
-            border: 0;
-            box-shadow: none;
-        }
-
-        .alerta-estoque {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
-            margin-bottom: 22px;
-        }
-
-        .stat-card {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            min-width: 0;
-            min-height: 112px;
-            padding: 20px;
-            border: 1px solid #e1e8ef;
-            border-radius: 14px;
-            background: #fff;
-            box-shadow: 0 6px 20px rgba(31, 55, 80, 0.045);
-        }
-
-        .stat-card > div:has(#statZerado) {
-            display: block;
-        }
-
-        .stat-icon {
-            display: grid;
-            flex: 0 0 48px;
-            width: 48px;
-            height: 48px;
-            min-height: 0;
-            padding: 0;
-            place-items: center;
-            border: 0;
-            border-radius: 13px;
-            font-size: 21px;
-        }
-
-        .stat-icon.purple { background: #f0eafe !important; color: #7046b8; }
-        .stat-icon.green { background: #e4f6ed !important; color: #218355; }
-        .stat-icon.orange { background: #fff1dc !important; color: #b76a13; }
-        .stat-icon.red { background: #fde9e9 !important; color: #c14343; }
-
-        .stat-value {
-            padding: 0;
-            border: 0;
-            background: transparent;
-            color: #173b5e;
-            font-size: 27px;
-            line-height: 1.15;
-        }
-
-        .stat-label {
-            min-height: 0;
-            margin-top: 5px;
-            padding: 0;
-            border: 0;
-            background: transparent;
-            color: #6b7b8d;
-            font-size: 12px;
-        }
-
-        .main-grand {
-            display: grid;
-            grid-column: auto;
-            grid-row: auto;
-            width: 100%;
-            margin: 0;
-            grid-template-columns: minmax(310px, 0.8fr) minmax(0, 1.7fr);
-            align-items: start;
-            gap: 20px;
-        }
-
-        .main-column {
-            display: grid;
-            min-width: 0;
-            gap: 20px;
-        }
-
-        .main-grand > *,
-        .main-column > * {
-            min-width: 0;
-        }
-
-        .card {
-            border: 1px solid #e1e8ef;
-            border-radius: 14px;
-            box-shadow: 0 6px 20px rgba(31, 55, 80, 0.045);
-        }
-
-        .card:hover {
-            border-color: #d7e2eb;
-            box-shadow: 0 9px 24px rgba(31, 55, 80, 0.075);
-        }
-
-        .card-header {
-            min-height: 74px;
-            padding: 17px 20px;
-        }
-
-        .card-header h2 {
-            margin: 3px 0 0;
-            color: #173b5e;
-            font-size: 17px;
-        }
-
-        .section-eyebrow {
-            color: #7890a5;
-            font-size: 10px;
-            font-weight: 750;
-            letter-spacing: 1px;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .history-card {
-            margin: 0 !important;
-        }
-
-        button {
-            width: auto;
-            min-height: 40px;
-            margin: 0;
-            border-radius: 8px;
-            font-family: inherit;
-        }
-
-        .entrada-tabs {
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            min-height: 40px;
-            background: transparent;
-            color: #617488;
-        }
-
-        .tab-btn.active {
-            background: #fff;
-            color: #1768a6;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            margin-bottom: 7px;
-            color: #33475b;
-            font-size: 13px;
-        }
-
-        .form-control,
-        .search-input {
-            width: 100%;
-            min-height: 43px;
-            margin: 0;
-            padding: 10px 12px;
-            border: 1px solid #d3dde7;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-        }
-
-        .btn-full {
-            width: 100%;
-            min-height: 44px;
-            margin-top: 4px;
-        }
-
-        .search-bar {
-            margin-bottom: 14px;
-        }
-
-        .filter-chips {
-            margin-bottom: 16px;
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-        }
-
-        .estoque-table {
-            min-width: 650px;
-        }
-
-        .estoque-table th {
-            font-size: 11px;
-        }
-
-        .action-row {
-            flex-wrap: wrap;
-        }
-
-        .empty-state p {
-            margin: 8px 0 0;
-        }
-
-        .modal-med-name {
-            display: block;
-            margin-bottom: 14px;
-            color: #173b5e;
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-        .field-help {
-            display: block;
-            margin-top: 7px;
-            color: #718196;
-            font-size: 12px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        @media (max-width: 1000px) {
-            .stats-bar {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .main-grand {
-                grid-template-columns: minmax(270px, 0.85fr) minmax(0, 1.4fr);
-            }
-        }
-
-        @media (max-width: 700px) {
-            .navbar {
-                flex-direction: row;
-                align-items: center;
-                padding: 14px 5%;
-            }
-
-            .nav-brand h1 {
-                font-size: 17px;
-            }
-
-            .nav-brand span {
-                font-size: 11px;
-            }
-
-            .nav-user {
-                width: auto;
-                flex-wrap: nowrap;
-            }
-
-            .container {
-                width: 92%;
-                margin-top: 20px;
-            }
-
-            .stats-bar {
-                gap: 10px;
-            }
-
-            .stat-card {
-                min-height: 94px;
-                gap: 10px;
-                padding: 13px 11px;
-            }
-
-            .stat-icon {
-                flex-basis: 38px;
-                width: 38px;
-                height: 38px;
-                border-radius: 11px;
-                font-size: 17px;
-            }
-
-            .stat-value {
-                font-size: 22px;
-            }
-
-            .stat-label {
-                font-size: 11px;
-            }
-
-            .main-grand {
-                grid-template-columns: minmax(0, 1fr);
-                gap: 16px;
-            }
-
-            .card-header,
-            .card-body {
-                padding: 15px;
-            }
-
-            .card-header h2 {
-                font-size: 15px;
-            }
-        }
-
-        @media (max-width: 440px) {
-            .navbar {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .nav-user {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .stats-bar {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-card {
-                min-height: 78px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Santa Cecília | Recepção e Atendimento</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f1f5f9;
+      color: #243247;
+    }
+
+    .topbar {
+      background: #123b63;
+      color: white;
+      padding: 16px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .hospital-info h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .hospital-info p {
+      color: #d6e6f5;
+      font-size: 13px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .status {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .btn-sair {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-sair:hover {
+      background: #b91c1c;
+    }
+
+    .page {
+      max-width: 1100px;
+      width: 92%;
+      margin: 30px auto;
+    }
+
+    .page-heading {
+      margin-bottom: 20px;
+    }
+
+    .page-heading h2 {
+      font-size: 26px;
+      color: #173e63;
+      margin-bottom: 6px;
+    }
+
+    .page-heading p {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      padding: 30px;
+      background: white;
+      border: 1px solid #e1e8f0;
+      border-radius: 14px;
+      box-shadow: 0 8px 25px rgba(31, 55, 80, 0.06);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #173e63;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5ebf2;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .campo.completo {
+      grid-column: 1 / -1;
+    }
+
+    .campo label {
+      color: #34465b;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .campo input,
+    .campo select {
+      width: 100%;
+      height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      background: #fff;
+      color: #243247;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .campo input:focus,
+    .campo select:focus {
+      border-color: #1768a6;
+      box-shadow: 0 0 0 3px rgba(23, 104, 166, 0.12);
+    }
+
+    .campo input[type="file"] {
+      height: auto;
+      padding: 9px;
+      background: #f8fafc;
+      cursor: pointer;
+    }
+
+    .separador {
+      margin: 28px 0 20px;
+    }
+
+    .form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #e5ebf2;
+      flex-wrap: wrap;
+    }
+
+    .aviso {
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.5;
+      max-width: 450px;
+    }
+
+    .btn-cadastrar {
+      border: none;
+      border-radius: 7px;
+      background: #1768a6;
+      color: white;
+      padding: 13px 26px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-cadastrar:hover {
+      background: #105487;
+    }
+
+    .btn-cadastrar:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .alerta-status {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .alerta-status.sucesso {
+      display: block;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .alerta-status.erro {
+      display: block;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .rodape {
+      text-align: center;
+      padding: 0 15px 30px;
+      color: #8492a5;
+      font-size: 12px;
+    }
+
+    @media (max-width: 650px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .campo.completo {
+        grid-column: auto;
+      }
+
+      .btn-cadastrar {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <header class="navbar">
-        <div class="nav-brand">
-            <div class="logo-icon">📦</div>
-            <div>
-                <h1>Hospital Santa Cecília</h1>
-                <span>Gestão de estoque e materiais</span>
-            </div>
-        </div>
-        <div class="nav-user">
-            <span class="user-pill" id="nomeUsuario">📦 Almoxarifado</span>
-            <a href="index.html" class="btn-nav">Sair</a>
-        </div>
-    </header>
 
-    <main class="container">
-        <div class="alerta-estoque" id="alertaEstoque" style="display:none">
-            <span aria-hidden="true">⚠️</span>
-            <strong>Atenção:</strong>
-            <span id="alertaTexto"></span>
-        </div>
-
-        <section class="stats-bar" aria-label="Resumo do estoque">
-            <article class="stat-card">
-                <div class="stat-icon purple">📦</div>
-                <div>
-                    <div class="stat-value" id="statItens">0</div>
-                    <div class="stat-label">Itens cadastrados</div>
-                </div>
-            </article>
-            <article class="stat-card">
-                <div class="stat-icon green">✓</div>
-                <div>
-                    <div class="stat-value" id="statOk">0</div>
-                    <div class="stat-label">Estoque normal</div>
-                </div>
-            </article>
-            <article class="stat-card">
-                <div class="stat-icon orange">!</div>
-                <div>
-                    <div class="stat-value" id="statBaixo">0</div>
-                    <div class="stat-label">Estoque baixo</div>
-                </div>
-            </article>
-            <article class="stat-card">
-                <div class="stat-icon red">×</div>
-                <div>
-                    <div class="stat-value" id="statZerado">0</div>
-                    <div class="stat-label">Sem estoque</div>
-                </div>
-            </article>
-        </section>
-
-        <section class="main-grand">
-            <div class="main-column">
-                <section class="card">
-                    <div class="card-header">
-                        <div>
-                            <span class="section-eyebrow">MOVIMENTAÇÃO</span>
-                            <h2>Entrada de itens</h2>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="entrada-tabs" role="tablist" aria-label="Tipo de entrada">
-                            <button type="button" class="tab-btn active" id="tabNovo" role="tab" aria-selected="true" onclick="setTab('novo')">Cadastrar item</button>
-                            <button type="button" class="tab-btn" id="tabRepor" role="tab" aria-selected="false" onclick="setTab('repor')">Repor estoque</button>
-                        </div>
-
-                        <div id="painelNovo" role="tabpanel">
-                            <div class="form-group">
-                                <label for="emNome">Nome do item</label>
-                                <input type="text" id="emNome" class="form-control" placeholder="Ex.: Paracetamol 500 mg" autocomplete="off">
-                            </div>
-                            <div class="form-group">
-                                <label for="emQtd">Quantidade inicial</label>
-                                <input type="number" id="emQtd" class="form-control" value="10" min="1" step="1">
-                            </div>
-                            <div class="form-group">
-                                <label for="emMin">Estoque mínimo (unidades)</label>
-                                <input type="number" id="emMin" class="form-control" value="10" min="0" step="1">
-                            </div>
-                            <div class="form-group">
-                                <label for="emUnidade">Unidade de medida</label>
-                                <select id="emUnidade" class="form-control">
-                                    <option value="comprimidos">Comprimidos</option>
-                                    <option value="cápsulas">Cápsulas</option>
-                                    <option value="frascos">Frascos</option>
-                                    <option value="ampolas">Ampolas</option>
-                                    <option value="sachês">Sachês</option>
-                                    <option value="unidades">Unidades</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="emCategoria">Categoria</label>
-                                <select id="emCategoria" class="form-control">
-                                    <option value="anti-inflamatorios">Anti-inflamatórios</option>
-                                    <option value="antialergicos">Antialérgicos</option>
-                                    <option value="protetores gastricos">Protetores gástricos</option>
-                                    <option value="antiespasmodicos">Antiespasmódicos</option>
-                                    <option value="antiemeticos">Antieméticos</option>
-                                    <option value="soluções">Soluções</option>
-                                    <option value="vitaminas">Vitaminas</option>
-                                    <option value="geral">Geral</option>
-                                </select>
-                            </div>
-                            <button type="button" class="btn-full btn-purple" onclick="darEntrada()">Cadastrar no estoque</button>
-                        </div>
-
-                        <div id="painelRepor" role="tabpanel" style="display:none">
-                            <div class="form-group">
-                                <label for="selReporMed">Medicamento</label>
-                                <select id="selReporMed" class="form-control">
-                                    <option value="">Selecione um medicamento</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="reporQtd">Quantidade para adicionar</label>
-                                <input type="number" id="reporQtd" class="form-control" value="10" min="1" step="1">
-                            </div>
-                            <div class="form-group">
-                                <label for="reporObs">Observação (opcional)</label>
-                                <input type="text" id="reporObs" class="form-control" placeholder="Ex.: Nota fiscal NF-001">
-                            </div>
-                            <button type="button" class="btn-full btn-purple" onclick="reporEstoque()">Adicionar ao estoque</button>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="card history-card">
-                    <div class="card-header">
-                        <div>
-                            <span class="section-eyebrow">ATIVIDADE</span>
-                            <h2>Entradas recentes</h2>
-                        </div>
-                        <button type="button" class="btn-sm btn-secondary" onclick="carregarHistoricoEntradas()">Atualizar</button>
-                    </div>
-                    <div class="card-body" id="historicoEntradas">
-                        <div class="empty-state">
-                            <div class="empty-icon">📋</div>
-                            <p>Nenhuma entrada nesta sessão.</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <section class="card stock-card">
-                <div class="card-header">
-                    <div>
-                        <span class="section-eyebrow">INVENTÁRIO</span>
-                        <h2>Estoque atual</h2>
-                    </div>
-                    <button type="button" class="btn-sm btn-secondary" onclick="carregarEstoque()">Atualizar</button>
-                </div>
-                <div class="card-body">
-                    <div class="search-bar">
-                        <input type="search" class="search-input" id="buscaMed" placeholder="Buscar por item ou categoria..." oninput="filtrarTabela()">
-                    </div>
-                    <div class="filter-chips" id="filterchips" aria-label="Filtrar por categoria"></div>
-                    <div class="table-wrap">
-                        <table class="estoque-table">
-                            <thead>
-                                <tr>
-                                    <th>Medicamento</th>
-                                    <th>Categoria</th>
-                                    <th>Disponível</th>
-                                    <th>Unidade</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelaEstoque">
-                                <tr>
-                                    <td colspan="5">
-                                        <div class="empty-state">
-                                            <div class="empty-icon">⌛</div>
-                                            <p>Carregando estoque...</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-        </section>
-    </main>
-
-    <div class="modal-overlay" id="modalEditar" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
-        <div class="modal-box">
-            <div class="modal-title" id="modalTitulo">Ajustar estoque</div>
-            <div class="form-group">
-                <label id="modalMedNome" class="modal-med-name"></label>
-                <label for="modalQtd">Quantidade a adicionar ou remover</label>
-                <input type="number" id="modalQtd" class="form-control" value="10" step="1">
-                <small class="field-help">Use um número negativo para remover unidades.</small>
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-sm btn-secondary" onclick="fecharModal()">Cancelar</button>
-                <button type="button" class="btn-sm btn-success" onclick="confirmarEdicao()">Salvar ajuste</button>
-            </div>
-        </div>
+  <header class="topbar">
+    <div class="hospital-info">
+      <h1>Hospital Santa Cecília</h1>
+      <p>Sistema Integrado de Gestão Hospitalar</p>
     </div>
 
-  <div id="toast" class="toast"></div>
+    <div class="topbar-actions">
+      <div class="status">● Recepção / Atendimento</div>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <div class="page-heading">
+      <h2>Cadastro de Paciente</h2>
+      <p>Registre as informações do paciente para encaminhamento imediato à fila de triagem.</p>
+    </div>
+
+    <div class="container">
+
+      <div id="alertaStatus" class="alerta-status"></div>
+
+      <form id="formAtendimento">
+
+        <h3 class="section-title">Dados Pessoais</h3>
+
+        <div class="form-grid">
+
+          <div class="campo completo">
+            <label for="nome">Nome Completo *</label>
+            <input id="nome" placeholder="Digite o nome completo do paciente" required>
+          </div>
+
+          <div class="campo">
+            <label for="cpf">CPF / Documento Oficial *</label>
+            <input id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+          </div>
+
+          <div class="campo">
+            <label for="dataNascimento">Data de Nascimento</label>
+            <input id="dataNascimento" type="date">
+          </div>
+
+          <div class="campo">
+            <label for="sexo">Sexo Biológico</label>
+            <select id="sexo">
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
+              <option value="Não informado">Prefiro não informar</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="nomeMae">Nome Completo da Mãe</label>
+            <input id="nomeMae" placeholder="Nome da mãe">
+          </div>
+
+          <div class="campo">
+            <label for="estadoCivil">Estado Civil</label>
+            <select id="estadoCivil">
+              <option value="Solteiro">Solteiro(a)</option>
+              <option value="Casado">Casado(a)</option>
+              <option value="Amasiado">União Estável</option>
+              <option value="Divorciado">Divorciado(a)</option>
+              <option value="Viúvo">Viúvo(a)</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="separador">
+          <h3 class="section-title">Contato e Localização</h3>
+        </div>
+
+        <div class="form-grid">
+
+          <div class="campo completo">
+            <label for="endereco">Endereço Residencial</label>
+            <input id="endereco" placeholder="Rua, número, bairro, cidade - UF">
+          </div>
+
+          <div class="campo">
+            <label for="telefone">Telefone de Contato</label>
+            <input id="telefone" placeholder="(00) 00000-0000" maxlength="15">
+          </div>
+
+          <div class="campo">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" placeholder="paciente@email.com">
+          </div>
+
+          <div class="campo completo">
+            <label for="contatoEmergencia">Contato de Emergência</label>
+            <input id="contatoEmergencia" placeholder="Nome do responsável e telefone de contato">
+          </div>
+
+        </div>
+
+        <div class="separador">
+          <h3 class="section-title">Informações de Acolhimento</h3>
+        </div>
+
+        <div class="form-grid">
+
+          <div class="campo">
+            <label for="tipo">Modalidade de Atendimento</label>
+            <select id="tipo">
+              <option value="Convenio">Convênio Médico</option>
+              <option value="Particular">Particular</option>
+              <option value="SUS">SUS / Encaminhamento</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="foto">Documento ou Imagem (Anexo)</label>
+            <input type="file" id="foto" accept="image/*,.pdf">
+          </div>
+
+        </div>
+
+        <div class="form-footer">
+          <div class="aviso">
+            * Campos obrigatórios. Confira as informações antes de dar entrada no paciente.
+          </div>
+
+          <button type="submit" class="btn-cadastrar" id="btnCadastrar">
+            Enviar para Triagem
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </main>
+
+  <footer class="rodape">
+    Hospital Santa Cecília · Sistema de Gestão Hospitalar e Acolhimento
+  </footer>
 
   <script>
-    //_______________________
-    // ESTADO GLOBAL
-    //_______________________
-    let estoqueGlobal = [];
-    let filtroAtivo = "todos";
-    let editandoId = null;
-    let historicoEntradas = [];
-    let toastTimeout = null;
+    const campoCpf = document.getElementById("cpf");
+    const campoTelefone = document.getElementById("telefone");
+    const formulario = document.getElementById("formAtendimento");
+    const botaoCadastrar = document.getElementById("btnCadastrar");
+    const alertaStatus = document.getElementById("alertaStatus");
 
-    // identificação do usuário logado
-    const usuario = JSON.parse(localStorage.getItem("hospital_user") || "{}");
-    if (usuario.nome) {
-        document.getElementById("nomeUsuario").textContent = "caixa" + usuario.nome;
-    }
+    // Formatação de CPF
+    campoCpf.addEventListener("input", function() {
+      let v = campoCpf.value.replace(/\D/g, "");
+      if (v.length > 11) v = v.substring(0, 11);
+      v = v.replace(/(\d{3})(\d)/, "$1.$2");
+      v = v.replace(/(\d{3})(\d)/, "$1.$2");
+      v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      campoCpf.value = v;
+    });
 
-    //    TOAST
+    // Formatação de Telefone
+    campoTelefone.addEventListener("input", function() {
+      let v = campoTelefone.value.replace(/\D/g, "");
+      if (v.length > 11) v = v.substring(0, 11);
+      v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+      v = v.replace(/(\d{5})(\d)/, "$1-$2");
+      campoTelefone.value = v;
+    });
 
-    function showToast(msg, tipo = "success") {
-      const toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.className = `toast toast-${tipo}`;
-      window.clearTimeout(toastTimeout);
-      toastTimeout = window.setTimeout(() => {
-        toast.className = "toast";
-        toast.textContent = "";
-      }, 4000);
-    }
-
-    // TABS   
-    function setTab(tab) {
-        const novoSelecionado = tab === "novo";
-        document.getElementById("painelNovo").style.display =
-            novoSelecionado ? "block" : "none";
-        document.getElementById("painelRepor").style.display =
-            novoSelecionado ? "none" : "block";
-        document.getElementById("tabNovo").classList.toggle("active", novoSelecionado);
-        document.getElementById("tabRepor").classList.toggle("active", !novoSelecionado);
-        document.getElementById("tabNovo").setAttribute("aria-selected", String(novoSelecionado));
-        document.getElementById("tabRepor").setAttribute("aria-selected", String(!novoSelecionado));
-
-        if (!novoSelecionado) preencherSelectRepor();
-    }
-
-//carregar estoque
-
-function apiUrl(path) {
-    return window.location.protocol === "file:"
-        ? `http://localhost:3000${path}`
-        : path;
-}
-
-function requestJson(path, options) {
-    return fetch(apiUrl(path), options).then(async response => {
-        const data = await response.json().catch(() => null);
-        if (!response.ok) {
-            throw new Error(data && data.erro
-                ? data.erro
-                : `Falha na solicitação (${response.status}).`);
+    // Converte arquivo para Base64
+    function converterParaBase64(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) {
+          resolve(null);
+          return;
         }
-        if (data === null) {
-            throw new Error("O servidor retornou uma resposta inválida.");
-        }
-        return data;
-    });
-}
 
-function carregarEstoque() {
-    requestJson("/estoque")
-    .then(data => {
-        if (!Array.isArray(data)) {
-            throw new Error("A resposta do estoque está em formato inválido.");
-        }
-        estoqueGlobal = data;
-        atualizarStats(data);
-        renderizarFiltros(data);
-        renderizarTabela(data);
-        verificarAlertas(data);
-    })
-    .catch(error => {
-        console.error("Erro ao carregar estoque:", error);
-        showToast(`Erro ao carregar estoque: ${error.message}`, "error");
-    });
-}
-// STATS
-
-function getStockMinimum(medicamento) {
-    const minimum = Number(medicamento.estoqueMinimo);
-    return Number.isInteger(minimum) && minimum >= 0 ? minimum : 10;
-}
-
-function atualizarStats(data) {
-    document.getElementById("statItens").textContent = data.length;
-    document.getElementById("statOk").textContent =
-        data.filter(m => Number(m.quantidade) > getStockMinimum(m)).length;
-    document.getElementById("statBaixo").textContent =
-        data.filter(m => Number(m.quantidade) > 0 &&
-            Number(m.quantidade) <= getStockMinimum(m)).length;
-    document.getElementById("statZerado").textContent =
-        data.filter(m => Number(m.quantidade) === 0).length;
-}
-
-function verificarAlertas(data) {
-    const baixos = data.filter(m => Number(m.quantidade) > 0 &&
-        Number(m.quantidade) <= getStockMinimum(m));
-    const zerados = data.filter(m => Number(m.quantidade) === 0);
-    const el = document.getElementById("alertaEstoque");
-    const mensagens = [];
-
-    if (zerados.length) {
-        mensagens.push(`${zerados.length} item(ns) sem estoque: ${zerados.map(m => m.nome).join(", ")}`);
-    }
-    if (baixos.length) {
-        mensagens.push(`${baixos.length} item(ns) abaixo do mínimo`);
-    }
-
-    if (mensagens.length) {
-        document.getElementById("alertaTexto").textContent = `${mensagens.join(" • ")}. Reponha quando possível.`;
-        el.style.display = "flex";
-    } else {
-        el.style.display = "none";
-    }
-}
-
-//filtros 
-
-function renderizarFiltros(data) {
-    const cats = [...new Set(data.map(m => m.categoria).filter(Boolean))];
-    const el = document.getElementById("filterchips");
-    el.replaceChildren();
-
-    ["todos", ...cats].forEach(categoria => {
-        const chip = document.createElement("span");
-        chip.className = `chip${filtroAtivo === categoria ? " active" : ""}`;
-        chip.textContent = categoria === "todos" ? "Todos" : categoria;
-        chip.addEventListener("click", () => setFiltro(categoria, chip));
-        el.appendChild(chip);
-    });
-}
-
-function setFiltro(cat, el){
-    filtroAtivo = cat;
-    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-    el.classList.add("active");
-    filtrarTabela();
-}
-
-function filtrarTabela() {
-    const busca = document.getElementById("buscaMed").value.toLowerCase();
-    const filtrados = estoqueGlobal.filter(m => {
-        const nome = String(m.nome || "").toLowerCase();
-        const categoria = String(m.categoria || "").toLowerCase();
-        const matchCat = filtroAtivo === "todos" || m.categoria === filtroAtivo;
-        return matchCat && (nome.includes(busca) || categoria.includes(busca));
-    });
-    renderizarTabela(filtrados);
-}
-
-// renderizar tabela 
-
-function getStockClass(q, estoqueMinimo = 10) {
-    if (q === 0) return "stock-empty";
-    if (estoqueMinimo > 0 && q <= Math.ceil(estoqueMinimo / 2)) return "stock-critical";
-    if (q <= estoqueMinimo) return "stock-low";
-    return "stock-ok";
-}
-function getStockIcon(q, estoqueMinimo = 10) {
-    if (q === 0) return "🚫";
-    if (estoqueMinimo > 0 && q <= Math.ceil(estoqueMinimo / 2)) return "🔴";
-    if (q <= estoqueMinimo) return "🟡";
-    return "🟢";
-}
-
-function renderizarTabela(data) {
-    const tbody = document.getElementById("tabelaEstoque");
-    tbody.replaceChildren();
-
-    if (!data || data.length === 0) {
-        const row = document.createElement("tr");
-        const cell = document.createElement("td");
-        cell.colSpan = 5;
-        cell.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>Nenhum item encontrado.</p></div>';
-        row.appendChild(cell);
-        tbody.appendChild(row);
-        return;
-    }
-
-    data.forEach(medicamento => {
-        const row = document.createElement("tr");
-        const nomeCell = document.createElement("td");
-        const nome = document.createElement("div");
-        nome.className = "med-name";
-        nome.textContent = medicamento.nome;
-        nomeCell.appendChild(nome);
-
-        const categoriaCell = document.createElement("td");
-        const categoria = document.createElement("div");
-        categoria.className = "med-cat";
-        categoria.textContent = medicamento.categoria || "-";
-        categoriaCell.appendChild(categoria);
-
-        const quantidadeCell = document.createElement("td");
-        const badge = document.createElement("div");
-        badge.className = `stock-badge ${getStockClass(
-            Number(medicamento.quantidade),
-            getStockMinimum(medicamento)
-        )}`;
-        badge.textContent = `${getStockIcon(
-            Number(medicamento.quantidade),
-            getStockMinimum(medicamento)
-        )} ${medicamento.quantidade}`;
-        quantidadeCell.appendChild(badge);
-
-        const unidadeCell = document.createElement("td");
-        unidadeCell.textContent = medicamento.unidade || "--";
-
-        const actionsCell = document.createElement("td");
-        const actions = document.createElement("div");
-        actions.className = "action-row";
-
-        const editButton = document.createElement("button");
-        editButton.type = "button";
-        editButton.className = "btn-sm btn-success";
-        editButton.textContent = "✏️ Editar";
-        editButton.addEventListener("click", () => abrirModalEditar(
-            medicamento.id,
-            medicamento.nome,
-            Number(medicamento.quantidade)
-        ));
-
-        const removeButton = document.createElement("button");
-        removeButton.type = "button";
-        removeButton.className = "btn-sm btn-danger-sm";
-        removeButton.textContent = "🗑️";
-        removeButton.setAttribute("aria-label", `Remover ${medicamento.nome}`);
-        removeButton.addEventListener("click", () => removerMedicamento(
-            medicamento.id,
-            medicamento.nome
-        ));
-
-        actions.append(editButton, removeButton);
-        actionsCell.appendChild(actions);
-        row.append(nomeCell, categoriaCell, quantidadeCell, unidadeCell, actionsCell);
-        tbody.appendChild(row);
-    });
-}
-
-                    // DAR ENTRADA (NOVO)
-  function darEntrada() {
-      const nome = document.getElementById("emNome").value.trim();
-      const qtd = Number(document.getElementById("emQtd").value);
-      const minimoInput = document.getElementById("emMin").value.trim();
-      const estoqueMinimo = Number(minimoInput);
-      const unidade = document.getElementById("emUnidade").value;
-      const categoria = document.getElementById("emCategoria").value;
-
-      if (!nome) { showToast("⚠️ Digite o nome do medicamento.", "warning"); return; }
-      if (!Number.isInteger(qtd) || qtd <= 0) { showToast("⚠️ Informe uma quantidade inteira maior que zero.", "warning"); return; }
-      if (!minimoInput || !Number.isInteger(estoqueMinimo) || estoqueMinimo < 0) {
-        showToast("⚠️ Informe um estoque mínimo inteiro igual ou maior que zero.", "warning");
-        return;
-      }
-
-      requestJson("/estoque", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, quantidade: qtd, estoqueMinimo, unidade, categoria })
-      })
-        .then(data => {
-          showToast("✅ " + data.mensagem, "success");
-          document.getElementById("emNome").value = "";
-          document.getElementById("emQtd").value = "10";
-
-          // Registra no histórico local
-          historicoEntradas.unshift({
-            tipo: "entrada",
-            nome: data.medicamento.nome,
-            qtd,
-            unidade: data.medicamento.unidade,
-            hora: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
-            responsavel: usuario.nome || "Almoxarifado"
-          });
-          renderizarHistorico();
-          carregarEstoque();
-        })
-        .catch(error => {
-          console.error("Erro ao registrar entrada:", error);
-          showToast(`❌ ${error.message}`, "error");
-        });
-    }
-
-    // ─────────────────────────────────────
-    //  REPOR EXISTENTE
-    // ─────────────────────────────────────
-    function preencherSelectRepor() {
-      const sel = document.getElementById("selReporMed");
-      sel.innerHTML = `<option value="">-- Selecione --</option>`;
-      estoqueGlobal.forEach(m => {
-        const opt = document.createElement("option");
-        opt.value = m.id;
-        opt.textContent = `${m.nome} (atual: ${m.quantidade} ${m.unidade})`;
-        sel.appendChild(opt);
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
       });
     }
 
-    function reporEstoque() {
-      const id = document.getElementById("selReporMed").value;
-      const qtdInput = document.getElementById("reporQtd").value.trim();
-      const qtd = Number(qtdInput);
+    formulario.addEventListener("submit", async function(event) {
+      event.preventDefault();
 
-      if (!id) { showToast("⚠️ Selecione um medicamento.", "warning"); return; }
-      if (!qtdInput || !Number.isInteger(qtd) || qtd <= 0) { showToast("⚠️ Informe uma quantidade inteira maior que zero.", "warning"); return; }
+      exibirAlerta("", false);
 
-      requestJson(`/estoque/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantidade: qtd })
-      })
-        .then(data => {
-          showToast(`✅ +${qtd} ${data.medicamento.unidade} adicionados! Novo total: ${data.medicamento.quantidade}`, "success");
-          document.getElementById("reporQtd").value = "10";
-          document.getElementById("reporObs").value = "";
+      const arquivoFoto = document.getElementById("foto").files[0];
+      let fotoBase64 = null;
 
-          historicoEntradas.unshift({
-            tipo: "reposicao",
-            nome: data.medicamento.nome,
-            qtd,
-            unidade: data.medicamento.unidade,
-            hora: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
-            responsavel: usuario.nome || "Almoxarifado"
-          });
-          renderizarHistorico();
-          carregarEstoque();
-        })
-        .catch(error => {
-          console.error("Erro ao repor estoque:", error);
-          showToast(`❌ ${error.message}`, "error");
+      try {
+        if (arquivoFoto) {
+          fotoBase64 = await converterParaBase64(arquivoFoto);
+        }
+
+        const dadosPaciente = {
+          nome: document.getElementById("nome").value.trim(),
+          cpf: document.getElementById("cpf").value,
+          dataNascimento: document.getElementById("dataNascimento").value,
+          sexo: document.getElementById("sexo").value,
+          nomeMae: document.getElementById("nomeMae").value.trim(),
+          estadoCivil: document.getElementById("estadoCivil").value,
+          endereco: document.getElementById("endereco").value.trim(),
+          telefone: document.getElementById("telefone").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          contatoEmergencia: document.getElementById("contatoEmergencia").value.trim(),
+          tipo: document.getElementById("tipo").value,
+          fotoAnexo: fotoBase64
+        };
+
+        botaoCadastrar.disabled = true;
+        botaoCadastrar.textContent = "Registrando...";
+
+        // Usa o domínio atual do sistema no Render
+        const resposta = await fetch("/api/atendimento", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dadosPaciente)
         });
-    }
 
-    // ─────────────────────────────────────
-    //  MODAL EDITAR QUANTIDADE
-    // ─────────────────────────────────────
-    function abrirModalEditar(id, nome, qtdAtual) {
-      editandoId = id;
-      document.getElementById("modalMedNome").textContent = `💊 ${nome} — Estoque atual: ${qtdAtual}`;
-      document.getElementById("modalQtd").value = "10";
-      document.getElementById("modalEditar").classList.add("open");
-    }
+        const resultado = await resposta.json();
 
-    function fecharModal() {
-      document.getElementById("modalEditar").classList.remove("open");
-      editandoId = null;
-    }
+        if (!resposta.ok || !resultado.sucesso) {
+          throw new Error(resultado.erro || "Falha ao registrar atendimento.");
+        }
 
-    function confirmarEdicao() {
-      const qtdInput = document.getElementById("modalQtd").value.trim();
-      const qtd = Number(qtdInput);
-      if (!qtdInput || !Number.isInteger(qtd)) { showToast("⚠️ Informe uma quantidade inteira.", "warning"); return; }
+        exibirAlerta(
+          "✅ Paciente cadastrado e encaminhado para a triagem com sucesso!",
+          true
+        );
 
-      requestJson(`/estoque/${editandoId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantidade: qtd })
-      })
-        .then(data => {
-          const acao = qtd > 0 ? `+${qtd}` : `${qtd}`;
-          showToast(`✅ ${acao} ${data.medicamento.unidade}. Novo total: ${data.medicamento.quantidade}`, "success");
-          fecharModal();
-          carregarEstoque();
-        })
-        .catch(error => {
-          console.error("Erro ao atualizar estoque:", error);
-          showToast(`❌ ${error.message}`, "error");
-        });
-    }
+        // Redireciona após a confirmação do cadastro
+        window.location.href = "triagem.html";
 
-    // ─────────────────────────────────────
-    //  REMOVER MEDICAMENTO
-    // ─────────────────────────────────────
-    function removerMedicamento(id, nome) {
-      if (!confirm(`Tem certeza que deseja REMOVER "${nome}" do estoque?\nEsta ação não pode ser desfeita.`)) return;
+      } catch (erro) {
+        console.error("Erro no cadastro:", erro);
 
-      requestJson(`/estoque/${id}`, { method: "DELETE" })
-        .then(() => {
-          showToast(`🗑️ "${nome}" removido do estoque.`, "success");
-          carregarEstoque();
-        })
-        .catch(error => {
-          console.error("Erro ao remover item do estoque:", error);
-          showToast(`❌ ${error.message}`, "error");
-        });
-    }
+        exibirAlerta(
+          "⚠️ " + (erro.message || "Erro ao conectar com o servidor."),
+          false
+        );
 
-    // ─────────────────────────────────────
-    //  HISTÓRICO DE ENTRADAS (local)
-    // ─────────────────────────────────────
-    function carregarHistoricoEntradas() {
-      renderizarHistorico();
-    }
+        botaoCadastrar.disabled = false;
+        botaoCadastrar.textContent = "Enviar para Triagem";
+      }
+    });
 
-    function renderizarHistorico() {
-      const div = document.getElementById("historicoEntradas");
-      div.replaceChildren();
-
-      if (historicoEntradas.length === 0) {
-        div.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma entrada nesta sessão.</p></div>';
+    function exibirAlerta(mensagem, sucesso) {
+      if (!mensagem) {
+        alertaStatus.className = "alerta-status";
+        alertaStatus.style.display = "none";
         return;
       }
 
-      historicoEntradas.slice(0, 15).forEach(entrada => {
-        const item = document.createElement("div");
-        item.className = "hist-item";
-
-        const icon = document.createElement("div");
-        icon.className = "hist-icon";
-        icon.textContent = entrada.tipo === "reposicao" ? "📦" : "📥";
-
-        const info = document.createElement("div");
-        info.className = "hist-info";
-
-        const name = document.createElement("div");
-        name.className = "hist-med";
-        name.textContent = entrada.nome;
-
-        const details = document.createElement("div");
-        details.className = "hist-sub";
-        details.textContent = `🕐 ${entrada.hora} • 👤 ${entrada.responsavel} • ${entrada.tipo === "reposicao" ? "Reposição" : "Novo cadastro"}`;
-        info.append(name, details);
-
-        const quantity = document.createElement("div");
-        quantity.className = "hist-qty-pos";
-        quantity.textContent = `+${entrada.qtd} ${entrada.unidade}`;
-
-        item.append(icon, info, quantity);
-        div.appendChild(item);
-      });
+      alertaStatus.textContent = mensagem;
+      alertaStatus.className = "alerta-status " + (sucesso ? "sucesso" : "erro");
     }
 
-    // ─────────────────────────────────────
-    //  FECHAR MODAL AO CLICAR FORA
-    // ─────────────────────────────────────
-    document.getElementById("modalEditar").addEventListener("click", function (e) {
-      if (e.target === this) fecharModal();
-    });
-
-    // ─────────────────────────────────────
-    //  INICIALIZAÇÃO
-    // ─────────────────────────────────────
-    carregarEstoque();
-    setInterval(carregarEstoque, 30000);
-
+    function sair() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
   </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
