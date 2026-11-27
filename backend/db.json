@@ -16,14 +16,9 @@
       "tipo": "atendimento"
     }
   ],
-  "pacientes": [
-    
-  ]
-  "triagens": [
-  
-  ],
-  "consultas": [
-  ],
+  "pacientes": [],
+  "triagens": [],
+  "consultas": [],
   "altas": [],
   "internacoes": [],
   "tv_chamada": null,
