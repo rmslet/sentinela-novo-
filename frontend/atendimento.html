@@ -7,394 +7,77 @@
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background: #f1f5f9;
-      color: #243247;
-    }
-
-    .topbar {
-      background: #123b63;
-      color: white;
-      padding: 16px 5%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      flex-wrap: wrap;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
-    }
-
-    .hospital-info h1 {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .hospital-info p {
-      color: #d6e6f5;
-      font-size: 13px;
-    }
-
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .status {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .btn-sair {
-      background: #dc2626;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-size: 13px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-
-    .btn-sair:hover {
-      background: #b91c1c;
-    }
-
-    .page {
-      max-width: 1100px;
-      width: 92%;
-      margin: 30px auto;
-    }
-
-    .page-heading {
-      margin-bottom: 20px;
-    }
-
-    .page-heading h2 {
-      font-size: 26px;
-      color: #173e63;
-      margin-bottom: 6px;
-    }
-
-    .page-heading p {
-      color: #64748b;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .container {
-      width: 100%;
-      padding: 30px;
-      background: white;
-      border: 1px solid #e1e8f0;
-      border-radius: 14px;
-      box-shadow: 0 8px 25px rgba(31, 55, 80, 0.06);
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #173e63;
-      margin-bottom: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #e5ebf2;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .campo {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-width: 0;
-    }
-
-    .campo.completo {
-      grid-column: 1 / -1;
-    }
-
-    .campo label {
-      color: #34465b;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .campo input,
-    .campo select {
-      width: 100%;
-      height: 44px;
-      padding: 10px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 7px;
-      background: #fff;
-      color: #243247;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .campo input:focus,
-    .campo select:focus {
-      border-color: #1768a6;
-      box-shadow: 0 0 0 3px rgba(23, 104, 166, 0.12);
-    }
-
-    .campo input[type="file"] {
-      height: auto;
-      padding: 9px;
-      background: #f8fafc;
-      cursor: pointer;
-    }
-
-    .separador {
-      margin: 28px 0 20px;
-    }
-
-    .form-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      margin-top: 25px;
-      padding-top: 20px;
-      border-top: 1px solid #e5ebf2;
-      flex-wrap: wrap;
-    }
-
-    .aviso {
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.5;
-      max-width: 450px;
-    }
-
-    .btn-cadastrar {
-      border: none;
-      border-radius: 7px;
-      background: #1768a6;
-      color: white;
-      padding: 13px 26px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .btn-cadastrar:hover {
-      background: #105487;
-    }
-
-    .btn-cadastrar:disabled {
-      background: #94a3b8;
-      cursor: not-allowed;
-    }
-
-    .alerta-status {
-      display: none;
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .alerta-status.sucesso {
-      display: block;
-      background: #dcfce7;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
-    }
-
-    .alerta-status.erro {
-      display: block;
-      background: #fee2e2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
-    }
-
-    .rodape {
-      text-align: center;
-      padding: 0 15px 30px;
-      color: #8492a5;
-      font-size: 12px;
-    }
-
-    @media (max-width: 650px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .campo.completo {
-        grid-column: auto;
-      }
-
-      .btn-cadastrar {
-        width: 100%;
-      }
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
+    body { min-height: 100vh; background: #f1f5f9; color: #243247; }
+    .topbar { background: #123b63; color: white; padding: 16px 5%; display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12); }
+    .hospital-info h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .hospital-info p { color: #d6e6f5; font-size: 13px; }
+    .topbar-actions { display: flex; align-items: center; gap: 15px; }
+    .status { background: rgba(255, 255, 255, 0.15); padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+    .btn-sair { background: #dc2626; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+    .btn-sair:hover { background: #b91c1c; }
+    .page { max-width: 1100px; width: 92%; margin: 30px auto; }
+    .page-heading { margin-bottom: 20px; }
+    .page-heading h2 { font-size: 26px; color: #173e63; margin-bottom: 6px; }
+    .page-heading p { color: #64748b; font-size: 14px; line-height: 1.5; }
+    .container { width: 100%; padding: 30px; background: white; border: 1px solid #e1e8f0; border-radius: 14px; box-shadow: 0 8px 25px rgba(31, 55, 80, 0.06); }
+    .section-title { font-size: 16px; font-weight: 700; color: #173e63; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid #e5ebf2; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .campo { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .campo.completo { grid-column: 1 / -1; }
+    .campo label { color: #34465b; font-size: 13px; font-weight: 600; }
+    .campo input, .campo select { width: 100%; height: 44px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 7px; background: #fff; color: #243247; font-size: 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    .campo input:focus, .campo select:focus { border-color: #1768a6; box-shadow: 0 0 0 3px rgba(23, 104, 166, 0.12); }
+    .campo input[type="file"] { height: auto; padding: 9px; background: #f8fafc; cursor: pointer; }
+    .separador { margin: 28px 0 20px; }
+    .form-footer { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 25px; padding-top: 20px; border-top: 1px solid #e5ebf2; flex-wrap: wrap; }
+    .aviso { color: #64748b; font-size: 12px; line-height: 1.5; max-width: 450px; }
+    .btn-cadastrar { border: none; border-radius: 7px; background: #1768a6; color: white; padding: 13px 26px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+    .btn-cadastrar:hover { background: #105487; }
+    .btn-cadastrar:disabled { background: #94a3b8; cursor: not-allowed; }
+    .alerta-status { display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
+    .alerta-status.sucesso { display: block; background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .alerta-status.erro { display: block; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+    .rodape { text-align: center; padding: 0 15px 30px; color: #8492a5; font-size: 12px; }
+    @media (max-width: 650px) { .form-grid { grid-template-columns: 1fr; } .campo.completo { grid-column: auto; } .btn-cadastrar { width: 100%; } }
   </style>
 </head>
-
 <body>
-
   <header class="topbar">
-    <div class="hospital-info">
-      <h1>Hospital Santa Cecília</h1>
-      <p>Sistema Integrado de Gestão Hospitalar</p>
-    </div>
-
-    <div class="topbar-actions">
-      <div class="status">● Recepção / Atendimento</div>
-      <button class="btn-sair" onclick="sair()">Sair</button>
-    </div>
+    <div class="hospital-info"><h1>Hospital Santa Cecília</h1><p>Sistema Integrado de Gestão Hospitalar</p></div>
+    <div class="topbar-actions"><div class="status">● Recepção / Atendimento</div><button class="btn-sair" onclick="sair()">Sair</button></div>
   </header>
-
   <main class="page">
-
-    <div class="page-heading">
-      <h2>Cadastro de Paciente</h2>
-      <p>Registre as informações do paciente para encaminhamento imediato à fila de triagem.</p>
-    </div>
-
+    <div class="page-heading"><h2>Cadastro de Paciente</h2><p>Registre as informações do paciente para encaminhamento imediato à fila de triagem.</p></div>
     <div class="container">
-
       <div id="alertaStatus" class="alerta-status"></div>
-
       <form id="formAtendimento">
-
         <h3 class="section-title">Dados Pessoais</h3>
-
         <div class="form-grid">
-
-          <div class="campo completo">
-            <label for="nome">Nome Completo *</label>
-            <input id="nome" placeholder="Digite o nome completo do paciente" required>
-          </div>
-
-          <div class="campo">
-            <label for="cpf">CPF / Documento Oficial *</label>
-            <input id="cpf" placeholder="000.000.000-00" maxlength="14" required>
-          </div>
-
-          <div class="campo">
-            <label for="dataNascimento">Data de Nascimento</label>
-            <input id="dataNascimento" type="date">
-          </div>
-
-          <div class="campo">
-            <label for="sexo">Sexo Biológico</label>
-            <select id="sexo">
-              <option value="Masculino">Masculino</option>
-              <option value="Feminino">Feminino</option>
-              <option value="Não informado">Prefiro não informar</option>
-            </select>
-          </div>
-
-          <div class="campo">
-            <label for="nomeMae">Nome Completo da Mãe</label>
-            <input id="nomeMae" placeholder="Nome da mãe">
-          </div>
-
-          <div class="campo">
-            <label for="estadoCivil">Estado Civil</label>
-            <select id="estadoCivil">
-              <option value="Solteiro">Solteiro(a)</option>
-              <option value="Casado">Casado(a)</option>
-              <option value="Amasiado">União Estável</option>
-              <option value="Divorciado">Divorciado(a)</option>
-              <option value="Viúvo">Viúvo(a)</option>
-            </select>
-          </div>
-
+          <div class="campo completo"><label for="nome">Nome Completo *</label><input id="nome" placeholder="Digite o nome completo do paciente" required></div>
+          <div class="campo"><label for="cpf">CPF / Documento Oficial *</label><input id="cpf" placeholder="000.000.000-00" maxlength="14" required></div>
+          <div class="campo"><label for="dataNascimento">Data de Nascimento</label><input id="dataNascimento" type="date"></div>
+          <div class="campo"><label for="sexo">Sexo Biológico</label><select id="sexo"><option value="Masculino">Masculino</option><option value="Feminino">Feminino</option><option value="Não informado">Prefiro não informar</option></select></div>
+          <div class="campo"><label for="nomeMae">Nome Completo da Mãe</label><input id="nomeMae" placeholder="Nome da mãe"></div>
+          <div class="campo"><label for="estadoCivil">Estado Civil</label><select id="estadoCivil"><option value="Solteiro">Solteiro(a)</option><option value="Casado">Casado(a)</option><option value="Amasiado">União Estável</option><option value="Divorciado">Divorciado(a)</option><option value="Viúvo">Viúvo(a)</option></select></div>
         </div>
-
-        <div class="separador">
-          <h3 class="section-title">Contato e Localização</h3>
-        </div>
-
+        <div class="separador"><h3 class="section-title">Contato e Localização</h3></div>
         <div class="form-grid">
-
-          <div class="campo completo">
-            <label for="endereco">Endereço Residencial</label>
-            <input id="endereco" placeholder="Rua, número, bairro, cidade - UF">
-          </div>
-
-          <div class="campo">
-            <label for="telefone">Telefone de Contato</label>
-            <input id="telefone" placeholder="(00) 00000-0000" maxlength="15">
-          </div>
-
-          <div class="campo">
-            <label for="email">E-mail</label>
-            <input id="email" type="email" placeholder="paciente@email.com">
-          </div>
-
-          <div class="campo completo">
-            <label for="contatoEmergencia">Contato de Emergência</label>
-            <input id="contatoEmergencia" placeholder="Nome do responsável e telefone de contato">
-          </div>
-
+          <div class="campo completo"><label for="endereco">Endereço Residencial</label><input id="endereco" placeholder="Rua, número, bairro, cidade - UF"></div>
+          <div class="campo"><label for="telefone">Telefone de Contato</label><input id="telefone" placeholder="(00) 00000-0000" maxlength="15"></div>
+          <div class="campo"><label for="email">E-mail</label><input id="email" type="email" placeholder="paciente@email.com"></div>
+          <div class="campo completo"><label for="contatoEmergencia">Contato de Emergência</label><input id="contatoEmergencia" placeholder="Nome do responsável e telefone de contato"></div>
         </div>
-
-        <div class="separador">
-          <h3 class="section-title">Informações de Acolhimento</h3>
-        </div>
-
+        <div class="separador"><h3 class="section-title">Informações de Acolhimento</h3></div>
         <div class="form-grid">
-
-          <div class="campo">
-            <label for="tipo">Modalidade de Atendimento</label>
-            <select id="tipo">
-              <option value="Convenio">Convênio Médico</option>
-              <option value="Particular">Particular</option>
-              <option value="SUS">SUS / Encaminhamento</option>
-            </select>
-          </div>
-
-          <div class="campo">
-            <label for="foto">Documento ou Imagem (Anexo)</label>
-            <input type="file" id="foto" accept="image/*,.pdf">
-          </div>
-
+          <div class="campo"><label for="tipo">Modalidade de Atendimento</label><select id="tipo"><option value="Convenio">Convênio Médico</option><option value="Particular">Particular</option><option value="SUS">SUS / Encaminhamento</option></select></div>
+          <div class="campo"><label for="foto">Documento ou Imagem (Anexo)</label><input type="file" id="foto" accept="image/*,.pdf"></div>
         </div>
-
-        <div class="form-footer">
-          <div class="aviso">
-            * Campos obrigatórios. Confira as informações antes de dar entrada no paciente.
-          </div>
-
-          <button type="submit" class="btn-cadastrar" id="btnCadastrar">
-            Enviar para Triagem
-          </button>
-        </div>
-
+        <div class="form-footer"><div class="aviso">* Campos obrigatórios. Confira as informações antes de dar entrada no paciente.</div><button type="submit" class="btn-cadastrar" id="btnCadastrar">Enviar para Triagem</button></div>
       </form>
-
     </div>
-
   </main>
-
-  <footer class="rodape">
-    Hospital Santa Cecília · Sistema de Gestão Hospitalar e Acolhimento
-  </footer>
-
+  <footer class="rodape">Hospital Santa Cecília · Sistema de Gestão Hospitalar e Acolhimento</footer>
   <script>
     const campoCpf = document.getElementById("cpf");
     const campoTelefone = document.getElementById("telefone");
@@ -402,7 +85,6 @@
     const botaoCadastrar = document.getElementById("btnCadastrar");
     const alertaStatus = document.getElementById("alertaStatus");
 
-    // Formatação de CPF
     campoCpf.addEventListener("input", function() {
       let v = campoCpf.value.replace(/\D/g, "");
       if (v.length > 11) v = v.substring(0, 11);
@@ -412,7 +94,6 @@
       campoCpf.value = v;
     });
 
-    // Formatação de Telefone
     campoTelefone.addEventListener("input", function() {
       let v = campoTelefone.value.replace(/\D/g, "");
       if (v.length > 11) v = v.substring(0, 11);
@@ -421,10 +102,9 @@
       campoTelefone.value = v;
     });
 
-    // Converte arquivo para Base64
     function converterParaBase64(file) {
       return new Promise((resolve, reject) => {
-        if (!file) resolve(null);
+        if (!file) { resolve(null); return; }
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
@@ -434,17 +114,12 @@
 
     formulario.addEventListener("submit", async function(event) {
       event.preventDefault();
-
       exibirAlerta("", false);
-
       const arquivoFoto = document.getElementById("foto").files[0];
       let fotoBase64 = null;
 
       try {
-        if (arquivoFoto) {
-          fotoBase64 = await converterParaBase64(arquivoFoto);
-        }
-
+        if (arquivoFoto) fotoBase64 = await converterParaBase64(arquivoFoto);
         const dadosPaciente = {
           nome: document.getElementById("nome").value.trim(),
           cpf: document.getElementById("cpf").value,
@@ -463,21 +138,17 @@
         botaoCadastrar.disabled = true;
         botaoCadastrar.textContent = "Registrando...";
 
-        const resposta = await fetch("http://localhost:3000/api/atendimento", {
+        // Usa a API do mesmo domínio em desenvolvimento e em produção; não aponta para o localhost do visitante.
+        const resposta = await fetch("/atendimento", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(dadosPaciente)
         });
-
         const resultado = await resposta.json();
-
-        if (!resposta.ok) {
-          throw new Error(resultado.erro || "Falha ao registrar atendimento.");
-        }
+        if (!resposta.ok) throw new Error(resultado.erro || "Falha ao registrar atendimento.");
 
         exibirAlerta("✅ Paciente cadastrado e encaminhado para a triagem com sucesso!", true);
         formulario.reset();
-
       } catch (erro) {
         console.error("Erro no cadastro:", erro);
         exibirAlerta("⚠️ " + (erro.message || "Erro ao conectar com o servidor."), false);
@@ -488,12 +159,7 @@
     });
 
     function exibirAlerta(mensagem, sucesso) {
-      if (!mensagem) {
-        alertaStatus.className = "alerta-status";
-        alertaStatus.style.display = "none";
-        return;
-      }
-
+      if (!mensagem) { alertaStatus.className = "alerta-status"; alertaStatus.style.display = "none"; return; }
       alertaStatus.textContent = mensagem;
       alertaStatus.className = "alerta-status " + (sucesso ? "sucesso" : "erro");
     }
@@ -503,6 +169,5 @@
       window.location.href = "index.html";
     }
   </script>
-
 </body>
 </html>
