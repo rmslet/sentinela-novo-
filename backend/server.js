@@ -1,3 +1,4 @@
+
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -172,19 +173,23 @@ app.post('/api/consulta', (req, res) => {
     const medicamento = db.estoque.find(
       item => String(item.id) === String(medicamentoId)
     );
+
     if (!medicamento) {
       return res.status(404).json({ erro: 'O medicamento selecionado não está cadastrado no estoque.' });
     }
 
     const estoqueAtual = Number(medicamento.quantidade);
+
     if (!Number.isInteger(estoqueAtual) || estoqueAtual < 0) {
       return res.status(500).json({ erro: 'A quantidade cadastrada para este medicamento é inválida.' });
     }
+
     if (estoqueAtual < 1) {
       return res.status(409).json({ erro: `Estoque insuficiente para prescrever ${medicamento.nome}.` });
     }
 
     medicamento.quantidade = estoqueAtual - 1;
+
     const novaConsulta = {
       id: Date.now(),
       paciente,
@@ -202,6 +207,7 @@ app.post('/api/consulta', (req, res) => {
     db.consultas.push(novaConsulta);
     salvarBancoEstoque(db);
     bancoDados.consultas = db.consultas;
+
     bancoDados.triagens = bancoDados.triagens.filter(
       triagem => triagem.nome !== paciente
     );
@@ -210,6 +216,7 @@ app.post('/api/consulta', (req, res) => {
     io.emit('atualizar_medicacoes', bancoDados.consultas);
 
     return res.status(201).json({ sucesso: true, consulta: novaConsulta });
+
   } catch (erro) {
     console.error('Erro ao registrar prescrição e descontar estoque:', erro);
     return res.status(500).json({ erro: 'Não foi possível registrar a prescrição e atualizar o estoque.' });
@@ -292,8 +299,10 @@ app.delete('/api/admin/usuarios/:id', (req, res) => {
 // ROTAS DO ALMOXARIFADO
 function lerBancoEstoque() {
   const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+
   if (!Array.isArray(db.estoque)) db.estoque = [];
   if (!Array.isArray(db.consultas)) db.consultas = [];
+
   return db;
 }
 
@@ -315,6 +324,7 @@ app.post('/estoque', (req, res) => {
     const db = lerBancoEstoque();
     const nome = String(req.body.nome || '').trim();
     const quantidade = Number(req.body.quantidade);
+
     const estoqueMinimo = req.body.estoqueMinimo === undefined
       ? 10
       : Number(req.body.estoqueMinimo);
@@ -342,10 +352,12 @@ app.post('/estoque', (req, res) => {
 
     db.estoque.push(medicamento);
     salvarBancoEstoque(db);
+
     return res.status(201).json({
       mensagem: 'Item adicionado ao estoque.',
       medicamento
     });
+
   } catch (erro) {
     console.error('Erro ao cadastrar item no estoque:', erro);
     return res.status(500).json({ erro: 'Não foi possível cadastrar o item.' });
@@ -355,6 +367,7 @@ app.post('/estoque', (req, res) => {
 app.patch('/estoque/:id', (req, res) => {
   try {
     const db = lerBancoEstoque();
+
     const medicamento = db.estoque.find(
       item => String(item.id) === req.params.id
     );
@@ -364,6 +377,7 @@ app.patch('/estoque/:id', (req, res) => {
     }
 
     const quantidade = Number(req.body.quantidade);
+
     if (
       req.body.quantidade === undefined ||
       req.body.quantidade === null ||
@@ -374,6 +388,7 @@ app.patch('/estoque/:id', (req, res) => {
     }
 
     const novaQuantidade = Number(medicamento.quantidade) + quantidade;
+
     if (novaQuantidade < 0) {
       return res.status(400).json({
         erro: 'A quantidade removida não pode ser maior que o estoque disponível.'
@@ -382,7 +397,9 @@ app.patch('/estoque/:id', (req, res) => {
 
     medicamento.quantidade = novaQuantidade;
     salvarBancoEstoque(db);
+
     return res.json({ mensagem: 'Estoque atualizado.', medicamento });
+
   } catch (erro) {
     console.error('Erro ao ajustar estoque:', erro);
     return res.status(500).json({ erro: 'Não foi possível ajustar o estoque.' });
@@ -392,6 +409,7 @@ app.patch('/estoque/:id', (req, res) => {
 app.delete('/estoque/:id', (req, res) => {
   try {
     const db = lerBancoEstoque();
+
     const index = db.estoque.findIndex(
       item => String(item.id) === req.params.id
     );
@@ -402,7 +420,9 @@ app.delete('/estoque/:id', (req, res) => {
 
     db.estoque.splice(index, 1);
     salvarBancoEstoque(db);
+
     return res.json({ mensagem: 'Item removido do estoque.' });
+
   } catch (erro) {
     console.error('Erro ao remover item do estoque:', erro);
     return res.status(500).json({ erro: 'Não foi possível remover o item.' });
@@ -415,10 +435,11 @@ io.on('connection', (socket) => {
 });
 
 // Inicialização do Servidor
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 server.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`🏥 Hospital Santa Cecília - Servidor Ativo`);
-  console.log(`🌐 Endereço da Aplicação: http://localhost:${PORT}`);
-  console.log(`====================================================`);
+  console.log('====================================================');
+  console.log('🏥 Hospital Santa Cecília - Servidor Ativo');
+  console.log(`🌐 Servidor iniciado na porta ${PORT}`);
+  console.log('====================================================');
 });
