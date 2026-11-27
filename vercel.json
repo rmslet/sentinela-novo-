@@ -9,6 +9,8 @@
     { "source": "/medicacoes", "destination": "/api/index.js" },
     { "source": "/lista-medicacoes", "destination": "/api/index.js" },
     { "source": "/tv/chamar", "destination": "/api/index.js" },
+    { "source": "/estoque", "destination": "/api/index.js" },
+    { "source": "/estoque/:id", "destination": "/api/index.js" },
     { "source": "/(.*)", "destination": "/frontend/$1" }
   ]
 }
